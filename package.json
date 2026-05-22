@@ -1,0 +1,17 @@
+{
+  "name": "instr",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser-first internal tool showcase for a manufacturing company.",
+  "scripts": {
+    "dev": "node server.js",
+    "check": "node --check app.js && node --check server.js"
+  },
+  "keywords": [
+    "manufacturing",
+    "browser-tools",
+    "vercel",
+    "local-first"
+  ],
+  "license": "UNLICENSED"
+}
