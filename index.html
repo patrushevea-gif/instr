@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>Instr | Витрина инструментов</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand-block">
+        <div class="mark">IN</div>
+        <div>
+          <p class="eyebrow">Производственная платформа</p>
+          <h1>Instr</h1>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-button" id="themeToggle" type="button" title="Режим плотности">Aa</button>
+        <a class="primary-link" href="#workspace">Открыть инструменты</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Локальная обработка файлов в браузере</p>
+          <h2>Единая витрина инструментов для цеха, офиса, качества, снабжения и управления.</h2>
+          <div class="hero-metrics" aria-label="Сводка">
+            <span><strong id="toolCount">0</strong> инструментов</span>
+            <span><strong>19</strong> направлений</span>
+            <span><strong>11</strong> быстрых модулей</span>
+          </div>
+        </div>
+        <div class="factory-map" aria-label="Карта процессов компании">
+          <div class="map-row top" id="topProcessMap"></div>
+          <div class="map-axis">
+            <span>Процессы</span>
+            <span>Направления</span>
+            <span>Процессы</span>
+          </div>
+          <div class="map-row lanes" id="departmentMap"></div>
+          <div class="map-row bottom" id="bottomProcessMap"></div>
+        </div>
+      </section>
+
+      <section class="control-strip" id="workspace">
+        <div class="search-box">
+          <label for="searchInput">Поиск</label>
+          <input id="searchInput" type="search" placeholder="BOM, OEE, QR, финансы, персонал..." autocomplete="off" />
+        </div>
+        <div class="segmented" id="statusFilters" aria-label="Статус"></div>
+        <div class="segmented" id="typeFilters" aria-label="Тип"></div>
+      </section>
+
+      <section class="layout">
+        <aside class="sidebar">
+          <div class="panel-title">Направления</div>
+          <nav id="departmentFilters" class="nav-list" aria-label="Направления"></nav>
+        </aside>
+
+        <section class="content-stack">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Быстрые модули</p>
+              <h3>Рабочая зона</h3>
+            </div>
+            <div class="local-badge">Все данные остаются в браузере</div>
+          </div>
+
+          <div class="tool-tabs" id="toolTabs"></div>
+
+          <div class="tool-runner" id="toolRunner">
+            <section class="tool-panel active" data-panel="csv">
+              <div class="tool-grid two">
+                <label class="field wide">
+                  <span>CSV / TSV</span>
+                  <textarea id="csvInput" rows="10">Артикул;Наименование;Кол-во
+A-100;Корпус;12
+A-200;Крышка;12
+A-300;Винт М6;48</textarea>
+                </label>
+                <div class="result-card">
+                  <div class="mini-toolbar">
+                    <button type="button" data-action="csv-clean">Очистить</button>
+                    <button type="button" data-action="csv-json">В JSON</button>
+                    <button type="button" data-action="copy" data-target="csvOutput">Копировать</button>
+                  </div>
+                  <pre id="csvOutput"></pre>
+                </div>
+              </div>
+            </section>
+
+            <section class="tool-panel" data-panel="bom">
+              <div class="tool-grid two">
+                <label class="field">
+                  <span>BOM было</span>
+                  <textarea id="bomOld" rows="10">part,qty,rev
+A-100,12,A
+A-200,12,A
+A-300,48,A</textarea>
+                </label>
+                <label class="field">
+                  <span>BOM стало</span>
+                  <textarea id="bomNew" rows="10">part,qty,rev
+A-100,12,B
+A-250,12,A
+A-300,50,A</textarea>
+                </label>
+              </div>
+              <div class="mini-toolbar">
+                <button type="button" data-action="bom-compare">Сравнить</button>
+                <button type="button" data-action="copy" data-target="bomOutput">Копировать</button>
+              </div>
+              <pre id="bomOutput" class="output-block"></pre>
+            </section>
+
+            <section class="tool-panel" data-panel="production">
+              <div class="calc-grid">
+                <label class="field"><span>Плановое время, мин</span><input id="plannedTime" type="number" value="480" /></label>
+                <label class="field"><span>Простой, мин</span><input id="downtime" type="number" value="35" /></label>
+                <label class="field"><span>Идеальный цикл, сек</span><input id="idealCycle" type="number" value="42" /></label>
+                <label class="field"><span>Выпуск, шт</span><input id="totalCount" type="number" value="560" /></label>
+                <label class="field"><span>Годные, шт</span><input id="goodCount" type="number" value="535" /></label>
+                <label class="field"><span>Спрос за смену, шт</span><input id="demand" type="number" value="520" /></label>
+              </div>
+              <div class="mini-toolbar">
+                <button type="button" data-action="production-calc">Рассчитать</button>
+              </div>
+              <div id="productionOutput" class="metric-grid"></div>
+            </section>
+
+            <section class="tool-panel" data-panel="quality">
+              <div class="tool-grid two">
+                <label class="field wide">
+                  <span>Измерения</span>
+                  <textarea id="qualityValues" rows="9">10.04
+10.02
+10.01
+9.99
+10.05
+10.03
+9.98
+10.00</textarea>
+                </label>
+                <div class="calc-grid compact">
+                  <label class="field"><span>LSL</span><input id="lsl" type="number" value="9.9" step="0.01" /></label>
+                  <label class="field"><span>USL</span><input id="usl" type="number" value="10.1" step="0.01" /></label>
+                  <label class="field"><span>Цель</span><input id="target" type="number" value="10" step="0.01" /></label>
+                </div>
+              </div>
+              <div class="mini-toolbar">
+                <button type="button" data-action="quality-calc">Cp/Cpk</button>
+                <button type="button" data-action="pareto-build">Pareto</button>
+              </div>
+              <div class="split-result">
+                <div id="qualityOutput" class="metric-grid"></div>
+                <canvas id="paretoCanvas" width="700" height="280" aria-label="Pareto"></canvas>
+              </div>
+            </section>
+
+            <section class="tool-panel" data-panel="labels">
+              <div class="calc-grid">
+                <label class="field"><span>Префикс</span><input id="serialPrefix" value="LOT-26-" /></label>
+                <label class="field"><span>Начало</span><input id="serialStart" type="number" value="1001" /></label>
+                <label class="field"><span>Количество</span><input id="serialCount" type="number" value="12" /></label>
+                <label class="field"><span>Артикул</span><input id="serialPart" value="A-100" /></label>
+              </div>
+              <div class="mini-toolbar">
+                <button type="button" data-action="serial-generate">Сгенерировать CSV</button>
+                <button type="button" data-action="copy" data-target="serialOutput">Копировать</button>
+              </div>
+              <pre id="serialOutput" class="output-block"></pre>
+            </section>
+
+            <section class="tool-panel" data-panel="data">
+              <div class="tool-grid two">
+                <label class="field wide">
+                  <span>JSON / JWT / Base64 / URL</span>
+                  <textarea id="dataInput" rows="10">{"order":"WO-1024","qty":120,"status":"ready"}</textarea>
+                </label>
+                <div class="result-card">
+                  <div class="mini-toolbar wrap">
+                    <button type="button" data-action="json-format">JSON</button>
+                    <button type="button" data-action="base64-encode">Base64 +</button>
+                    <button type="button" data-action="base64-decode">Base64 -</button>
+                    <button type="button" data-action="url-encode">URL +</button>
+                    <button type="button" data-action="jwt-decode">JWT</button>
+                    <button type="button" data-action="copy" data-target="dataOutput">Копировать</button>
+                  </div>
+                  <pre id="dataOutput"></pre>
+                </div>
+              </div>
+            </section>
+
+            <section class="tool-panel" data-panel="security">
+              <div class="tool-grid two">
+                <label class="field wide">
+                  <span>Текст или содержимое файла</span>
+                  <textarea id="hashInput" rows="8">Партия LOT-26-1001 принята ОТК</textarea>
+                </label>
+                <div class="result-card">
+                  <label class="file-drop">
+                    <input id="hashFile" type="file" />
+                    <span>Выбрать файл</span>
+                  </label>
+                  <div class="mini-toolbar">
+                    <button type="button" data-action="hash-text">SHA-256</button>
+                    <button type="button" data-action="copy" data-target="hashOutput">Копировать</button>
+                  </div>
+                  <pre id="hashOutput"></pre>
+                </div>
+              </div>
+            </section>
+
+            <section class="tool-panel" data-panel="gs1">
+              <div class="tool-grid two">
+                <label class="field wide">
+                  <span>GS1 строка</span>
+                  <textarea id="gs1Input" rows="6">(01)04601234567890(10)BATCH42(17)260930(21)SN1001</textarea>
+                </label>
+                <div class="result-card">
+                  <div class="mini-toolbar">
+                    <button type="button" data-action="gs1-parse">Разобрать</button>
+                    <button type="button" data-action="copy" data-target="gs1Output">Копировать</button>
+                  </div>
+                  <pre id="gs1Output"></pre>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Каталог</p>
+              <h3>Инструменты по подразделениям</h3>
+            </div>
+            <button id="exportBacklog" class="secondary-button" type="button">Экспорт backlog</button>
+          </div>
+          <div class="tool-catalog" id="toolCatalog"></div>
+        </section>
+      </section>
+    </main>
+
+    <footer>
+      <span>Instr</span>
+      <span>Browser-first</span>
+      <span>Vercel-ready</span>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
