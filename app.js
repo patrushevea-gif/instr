@@ -188,6 +188,160 @@ const mvpNames = new Set([
 
 const libraryCategories = new Set(["documents", "engineering", "warehouse", "media", "dev", "ai"]);
 
+const phraseRu = new Map([
+  ["CSV viewer", "Просмотр CSV"],
+  ["CSV cleaner", "Очистка CSV"],
+  ["CSV delimiter detector", "Определение разделителя CSV"],
+  ["CSV to JSON", "CSV в JSON"],
+  ["CSV to XLSX", "CSV в XLSX"],
+  ["XLSX viewer", "Просмотр XLSX"],
+  ["XLSX to CSV", "XLSX в CSV"],
+  ["XLSX to JSON", "XLSX в JSON"],
+  ["SQL over CSV", "SQL по CSV"],
+  ["SQL over Parquet", "SQL по Parquet"],
+  ["JSON to TypeScript", "JSON в TypeScript"],
+  ["XML to JSON", "XML в JSON"],
+  ["YAML to JSON", "YAML в JSON"],
+  ["PDF to image", "PDF в изображение"],
+  ["Images to PDF", "Изображения в PDF"],
+  ["Markdown to PDF", "Markdown в PDF"],
+  ["HTML to PDF", "HTML в PDF"],
+  ["DOCX to HTML", "DOCX в HTML"],
+  ["PNG to WebP", "PNG в WebP"],
+  ["JPG to WebP", "JPG в WebP"],
+  ["Base64 file encoder", "Кодирование файла в Base64"],
+  ["AES-GCM encrypt note", "Шифрование заметки AES-GCM"],
+  ["5 Why builder", "Конструктор 5 Why"],
+  ["8D report builder", "Конструктор отчета 8D"],
+  ["X-bar R chart", "Карта X-bar R"],
+  ["I-MR chart", "Карта I-MR"],
+  ["p-chart", "p-карта"],
+  ["np-chart", "np-карта"],
+  ["Wi-Fi QR generator", "Генератор Wi-Fi QR"],
+  ["G-code viewer", "Просмотр G-code"],
+  ["OpenAPI viewer", "Просмотр OpenAPI"],
+  ["GraphQL payload viewer", "Просмотр payload GraphQL"],
+  ["Robots.txt viewer", "Просмотр robots.txt"],
+  ["Schema.org note", "Заметка по Schema.org"],
+  ["Break-even calculator", "Калькулятор точки безубыточности"],
+  ["CRC32 checksum", "Контрольная сумма CRC32"],
+  ["Cp/Cpk calculator", "Калькулятор Cp/Cpk"],
+  ["Pp/Ppk calculator", "Калькулятор Pp/Ppk"],
+  ["SHA-256 checksum", "Контрольная сумма SHA-256"],
+  ["I-MR chart", "Карта I-MR"],
+  ["X-bar R chart", "Карта X-bar R"],
+  ["Near miss report", "Отчет о почти-инциденте"],
+  ["AI use-case register", "Реестр AI use-case"],
+  ["Work order generator", "Генератор производственного задания"],
+  ["Protocol of disagreements helper", "Помощник по протоколу разногласий"]
+]);
+
+const keepTerms = new Set([
+  "CSV", "TSV", "JSON", "XLSX", "PDF", "DOCX", "PPTX", "SQL", "BOM", "SPC", "MSA", "NCR", "CAPA", "FMEA",
+  "DXF", "STL", "OBJ", "STEP", "IGES", "QR", "GS1", "RFQ", "KPI", "CRM", "SEO", "UTM", "NPS", "VAT",
+  "CAPEX", "ROI", "NPV", "IRR", "HR", "IT", "SSL", "DNS", "API", "UUID", "MIME", "OpenAPI", "GraphQL",
+  "SVG", "PNG", "JPG", "WebP", "OCR", "EXIF", "MTBF", "MTTR", "SDS", "OEE", "SMED", "WIP", "FPY", "RTY",
+  "AQL", "JWT", "MD5", "CRC32", "AES", "PEM", "PII", "AI", "RAG", "LLM", "HTML", "CSS", "URL", "UTF", "IP",
+  "ABC", "AES-GCM", "Cp", "Cpk", "Pp", "Ppk", "NDA", "PPE", "QA", "SKU", "FIFO", "Pareto", "Parquet",
+  "TypeScript", "NanoID", "vCard", "Wi-Fi", "G-code", "X-bar", "I-MR", "Cookie", "Favicon", "Webhook"
+]);
+
+const wordRu = new Map(Object.entries({
+  ABC: "ABC", acceptance: "приемки", access: "доступов", accessibility: "доступности", account: "клиента", act: "акта", action: "действий",
+  adaptation: "адаптации", after: "после", agent: "агента", aging: "старения", allowance: "припуска", alt: "alt-текста",
+  alternative: "альтернатив", analysis: "анализа", analyzer: "анализатор", andon: "Andon", approval: "согласования",
+  archive: "архива", article: "статьи", aspect: "аспектов", assessment: "оценки", asset: "активов", assortment: "ассортимента",
+  attorney: "доверенностей", audio: "аудио", audit: "аудита", backup: "резервного копирования", balancing: "балансировки",
+  barcode: "штрихкодов", base: "базы", batch: "партий", bearing: "подшипника", before: "до", bend: "гиба", bin: "ячеек",
+  bitrix: "Битрикс", board: "доска", bolt: "болтов", bottleneck: "узких мест", brand: "бренда", brief: "брифа",
+  briefing: "инструктажа", broken: "битых", budget: "бюджета", builder: "конструктор", cable: "кабеля",
+  calculator: "калькулятор", calendar: "календарь", calibration: "калибровки", call: "звонка", campaign: "кампании",
+  canonical: "канонической ссылки", capacity: "мощности", capital: "капитала", card: "карточка", cargo: "груза",
+  carton: "коробов", case: "кейсов", cases: "кейсов", cashflow: "ДДС", cause: "причин", center: "центров",
+  certificate: "сертификата", certification: "сертификации", change: "изменений", changeover: "переналадки",
+  chart: "карта", checker: "проверка", checklist: "чек-лист", checksum: "контрольной суммы", chemical: "химии",
+  circle: "окружности", claim: "претензии", claims: "претензий", classifier: "классификатор", cleaner: "очистка",
+  client: "клиента", close: "закрытия", clustering: "кластеризации", code: "кодов", color: "цветов", column: "колонок",
+  commercial: "коммерческого", comparer: "сравнение", comparison: "сравнения", compatibility: "совместимости",
+  competitor: "конкурентов", complaint: "жалоб", completion: "завершения", compress: "сжатия", compressor: "сжатие",
+  configuration: "конфигураций", consumption: "расхода", contact: "контактов", container: "контейнера", content: "контента",
+  contents: "содержимого", contract: "договора", contrast: "контраста", contribution: "маржинальности", control: "контрольная",
+  converter: "конвертер", cookie: "cookie", corporate: "корпоративных", cost: "стоимости", count: "количества",
+  counterparty: "контрагента", court: "судебных", cover: "обложки", critical: "критичного", cron: "cron",
+  crop: "кадрирования", currency: "валют", customer: "клиента", customs: "таможенных", cutting: "раскроя",
+  cycle: "цикла", cylinder: "цилиндра", daily: "ежедневного", dashboard: "дашборд", data: "данных", dataset: "набора данных",
+  date: "дат", deadline: "сроков", decision: "решений", decoder: "декодер", defanger: "обезвреживание", defect: "дефектов",
+  delimiter: "разделителя", delivery: "доставки", density: "плотности", description: "описания", detector: "определитель",
+  dictionary: "словаря", diff: "сравнение", disagreements: "разногласий", discount: "скидки", dispatch: "отгрузки",
+  document: "документов", downtime: "простоев", drawing: "чертежа", drill: "сверления", due: "сроков", duplicate: "дубликатов",
+  duration: "длительности", economics: "экономики", email: "email", emergency: "аварийных", employee: "сотрудника",
+  encoder: "кодировщик", encoding: "кодировки", encrypt: "шифрование", encrypted: "зашифрованных", engineering: "инженерных",
+  environmental: "экологических", equipment: "оборудования", evaluator: "оценщик", event: "событий", excel: "Excel",
+  exit: "увольнения", expense: "расходов", expiry: "срока годности", explainer: "объяснение", export: "экспортных",
+  expression: "выражений", extraction: "извлечения", extractor: "извлечение", fact: "факта", failure: "отказов",
+  favicon: "favicon", feedback: "обратной связи", file: "файлов", final: "финального", financial: "финансового",
+  find: "поиск", finder: "поиск", fire: "пожарной", fit: "посадок", fixer: "исправление", flow: "потока",
+  forecast: "прогноза", form: "формы", formatter: "форматтер", frame: "кадров", from: "из", fuel: "топлива",
+  gauge: "измерительной системы", gear: "передаточного числа", generation: "генерации", generator: "генератор",
+  graph: "графа", hallucination: "галлюцинаций", handoff: "передачи", handover: "передачи", hash: "хэшей",
+  headcount: "численности", header: "заголовков", helper: "помощник", histogram: "гистограмма", hydraulic: "гидравлики",
+  icon: "иконок", image: "изображений", images: "изображений", import: "импорта", importer: "импорт", incident: "инцидентов",
+  incoming: "входного", incoterms: "Incoterms", inspection: "инспекции", instruction: "инструкций", internal: "внутренней",
+  interval: "интервала", interview: "собеседования", inventory: "инвентаря", invoice: "счета", ishikawa: "Ишикавы",
+  issue: "выдачи", item: "позиции", job: "работ", kanban: "Kanban", keyword: "ключевых слов", knowledge: "базы знаний",
+  label: "этикеток", labor: "трудозатрат", landing: "лендинга", lead: "лидов", legal: "юридических", length: "длины",
+  library: "библиотека", license: "лицензий", life: "ресурса", line: "линий", lines: "строк", link: "ссылок",
+  list: "списков", load: "загрузки", loading: "загрузки", loan: "кредита", local: "локальный", location: "локаций",
+  log: "журнал", logistics: "логистики", lookup: "справочник", lorem: "рыба-текста", loss: "потерь", lot: "партий",
+  lubrication: "смазки", machine: "станков", maintenance: "ТОиР", malicious: "опасных", management: "управленческого",
+  manifest: "манифеста", map: "карта", mapping: "сопоставления", margin: "маржи", markdown: "Markdown", market: "рынка",
+  marketing: "маркетинга", marketplace: "маркетплейса", material: "материалов", materials: "материалов", matrix: "матрица",
+  media: "медиа", meeting: "встречи", mention: "упоминаний", merge: "объединение", merger: "объединение", mermaid: "Mermaid",
+  meta: "мета", metadata: "метаданных", minutes: "протокола", miss: "почти-инцидентов", model: "модели", MOQ: "MOQ",
+  motivation: "мотивации", motor: "двигателя", naming: "именования", normalizer: "нормализация", note: "заметка", notes: "заметок", number: "номеров",
+  objection: "возражений", obligation: "обязательств", offer: "предложения", onboarding: "адаптации", open: "открытых",
+  operator: "оператора", optimizer: "оптимизатор", order: "заказа", org: "оргструктуры", outline: "структуры", output: "выпуска",
+  pack: "пакета", package: "пакета", packaging: "упаковки", packing: "упаковочного", page: "страницы", paint: "покраски",
+  palette: "палитры", pallet: "паллет", parser: "парсер", part: "артикулов", parts: "запчастей", passphrase: "парольной фразы",
+  password: "паролей", pattern: "шаблона", payables: "кредиторки", payload: "payload", payment: "платежей", payroll: "зарплатных",
+  percent: "процентов", performance: "эффективности", permit: "допуска", persona: "персоны", personal: "персональных",
+  of: "", on: "по", phishing: "фишинга", phone: "телефонов", photo: "фото", pick: "подбора", picker: "выбор", pipeline: "воронки",
+  pivot: "сводной", plan: "плана", planner: "планировщик", pneumatic: "пневматики", point: "точки", policy: "политики",
+  portfolio: "портфеля", post: "поста", power: "мощности", prefix: "префикса", preventive: "планового", preview: "предпросмотр",
+  price: "цен", priority: "приоритетов", privacy: "приватности", procurement: "закупок", product: "продукта",
+  production: "производства", profiler: "профиль", prompt: "промптов", protocol: "протокола", purchase: "закупки",
+  putaway: "размещения", qualification: "квалификации", quality: "качества", quote: "КП", random: "случайный",
+  ratio: "отношения", receivables: "дебиторки", receiving: "приемки", redirect: "редиректов", redline: "сравнения версий",
+  regex: "регулярных выражений", register: "реестр", release: "релиза", reminder: "напоминания", remover: "удаление",
+  renamer: "переименование", renderer: "рендерер", reorder: "переупорядочивание", repair: "ремонта", repeat: "повторных",
+  replace: "замены", report: "отчет", request: "заявки", requirement: "требований", resizer: "изменение размера",
+  response: "ответа", responsive: "адаптива", retail: "розницы", review: "проверки", rewrite: "переписывания",
+  rights: "прав", risk: "рисков", rod: "прутка", root: "корневых", roster: "графика", rotate: "поворот",
+  route: "маршрута", rubric: "рубрики", safety: "безопасности", sales: "продаж", sampling: "выборки",
+  sanctions: "санкций", savings: "экономии", scanner: "сканер", scenario: "сценариев", schedule: "графика",
+  schema: "схемы", scheme: "схемы", scorecard: "карта оценки", scoring: "скоринга", scrap: "брака",
+  screening: "проверки", screenshot: "скриншота", script: "скрипта", secret: "секретов", section: "сечения",
+  security: "безопасности", segmentation: "сегментации", selector: "подборщик", serial: "серийных", service: "сервиса",
+  sharing: "обмена", sheet: "листа", shift: "смены", shipment: "отгрузки", shopping: "покупок", signal: "сигналов",
+  sitemap: "sitemap", size: "размера", skill: "навыков", SKU: "SKU", SLA: "SLA", slug: "slug", snippet: "сниппетов",
+  social: "соцсетей", SOP: "SOP", sorter: "сортировка", source: "источников", spare: "запасных", spec: "спецификации",
+  specification: "спецификаций", speed: "скорости", split: "разделение", splitter: "разделение", stamp: "штампа",
+  standard: "норматива", stats: "статистика", status: "статуса", stock: "запасов", stop: "остановок", stopwatch: "секундомер",
+  subject: "темы", subnet: "подсетей", suffix: "суффикса", summary: "сводки", supplier: "поставщиков", survey: "опроса",
+  synthetic: "синтетических", system: "системного", table: "таблицы", takt: "такта", task: "задач", technician: "техника",
+  temperature: "температуры", template: "шаблона", tender: "тендера", terms: "условий", test: "тестов", tester: "тестер",
+  text: "текста", thread: "резьбы", throughput: "производительности", thumbnail: "миниатюр", time: "времени", to: "в",
+  timer: "таймер", timestamp: "timestamp", title: "заголовка", tolerance: "допусков", tool: "инструментов",
+  torque: "момента", trace: "трассировки", traceability: "прослеживаемости", tracker: "трекер", training: "обучения",
+  transliteration: "транслитерации", transport: "транспортных", traveler: "маршрутного листа", tree: "дерева",
+  triage: "триажа", truck: "грузовика", type: "типов", unit: "единиц", user: "пользователей", vacation: "отпусков",
+  variance: "отклонений", vault: "хранилище", vendor: "поставщиков", version: "версий", video: "видео", viewer: "просмотр",
+  volume: "объема", warehouse: "склада", warranty: "гарантии", waste: "отходов", waterfall: "водопада",
+  watermark: "водяного знака", webhook: "webhook", website: "сайта", weight: "веса", weld: "сварки",
+  whitespace: "пробелов", win: "побед", work: "работ", workday: "рабочих дней", working: "оборотного",
+  workplace: "рабочего места", worksheet: "листа", XML: "XML", YAML: "YAML", yield: "выхода", zone: "зоны"
+}));
+
 const tools = Object.entries(toolSeeds).flatMap(([category, names]) => names.map((name, index) => ({
   name,
   category,
@@ -256,7 +410,7 @@ function renderCatalog() {
     const categoryMatch = state.category === "all" || tool.category === state.category;
     const statusMatch = state.status === "all" || tool.status === state.status;
     const typeMatch = state.type === "all" || tool.type === state.type;
-    const haystack = `${tool.name} ${tool.description} ${tool.tags.join(" ")} ${categoryName(tool.category)}`.toLowerCase();
+    const haystack = `${tool.name} ${toolTitle(tool.name)} ${tool.description} ${tool.tags.join(" ")} ${categoryName(tool.category)}`.toLowerCase();
     const queryMatch = !state.query || haystack.includes(state.query.toLowerCase());
     return categoryMatch && statusMatch && typeMatch && queryMatch;
   });
@@ -266,7 +420,7 @@ function renderCatalog() {
   $("#toolCatalog").innerHTML = filtered.map((tool) => `
     <article class="tool-card">
       <div>
-        <h4>${tool.name}</h4>
+        <h4>${toolTitle(tool.name)}</h4>
         <span class="status ${tool.status}">${statusLabel(tool.status)}</span>
       </div>
       <p>${tool.description}</p>
@@ -641,7 +795,7 @@ function copyOutput(target) {
 
 function exportBacklog() {
   const rows = [["name", "category", "status", "type", "tags"]];
-  tools.forEach((tool) => rows.push([tool.name, categoryName(tool.category), tool.status, tool.type, tool.tags.join("|")]));
+  tools.forEach((tool) => rows.push([toolTitle(tool.name), categoryName(tool.category), tool.status, tool.type, tool.tags.join("|")]));
   const csv = rows.map((row) => row.map(escapeCsv).join(",")).join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
@@ -652,15 +806,34 @@ function exportBacklog() {
 }
 
 function descriptionFor(name, category) {
+  const title = toolTitle(name);
   const categoryText = categoryName(category).toLowerCase();
-  if (readyNames.has(name)) return `Рабочий browser-only модуль: ${name}. Можно использовать сразу без сервера.`;
-  if (mvpNames.has(name)) return `Кандидат на ближайший MVP: ${name}. Логика подходит для локальной обработки в браузере.`;
-  return `Идея для каталога: ${name}. Тема: ${categoryText}; реализация отдельным модулем или библиотекой.`;
+  if (readyNames.has(name)) return `Рабочий browser-only модуль: ${title}. Можно использовать сразу без сервера.`;
+  if (mvpNames.has(name)) return `Кандидат на ближайший MVP: ${title}. Логика подходит для локальной обработки в браузере.`;
+  return `Идея для каталога: ${title}. Тема: ${categoryText}; реализация отдельным модулем или библиотекой.`;
 }
 
 function tagsFor(name, category) {
-  const words = name.split(/\s+/).slice(0, 3);
+  const words = toolTitle(name).split(/\s+/).slice(0, 3);
   return [categoryName(category), ...words].filter(Boolean);
+}
+
+function toolTitle(name) {
+  if (phraseRu.has(name)) return phraseRu.get(name);
+  return name
+    .split(/(\s+|\/|,|:)/)
+    .map((token) => {
+      const plain = token.replace(/[()]/g, "");
+      if (!/[A-Za-z]/.test(plain)) return token;
+      if (keepTerms.has(plain)) return token;
+      const lower = plain.toLowerCase();
+      const translated = wordRu.has(lower) ? wordRu.get(lower) : wordRu.get(plain);
+      return translated !== undefined ? token.replace(plain, translated) : token;
+    })
+    .join("")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^./, (char) => char.toUpperCase());
 }
 
 function countByCategory(id) {
