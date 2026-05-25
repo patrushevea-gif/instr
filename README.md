@@ -4,9 +4,9 @@ Browser-first internal toolbox for a manufacturing company.
 
 ## What is inside
 
-- Company process map for 19 directions.
-- Searchable tool showcase with statuses: ready, MVP, backlog.
-- Working browser-only modules: CSV cleaner, BOM comparer, OEE/takt calculator, Cp/Cpk, Pareto, serial batch CSV, JSON/JWT/Base64/URL tools, SHA-256 checksum, GS1 parser.
+- Menu-based catalog with 24 broad topics and 500+ tool ideas.
+- Searchable tool list with statuses: ready, MVP, backlog.
+- Working browser-only modules: CSV cleaner, BOM comparer, OEE/takt calculator, Cp/Cpk, Pareto, serial batch CSV, JSON/JWT/Base64/URL tools, text utilities, SHA-256 checksum, GS1 parser.
 - Vercel-ready static deployment.
 
 ## Local run
