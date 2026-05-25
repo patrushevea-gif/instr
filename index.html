@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light" />
-    <title>Instr | Витрина инструментов</title>
+    <title>Instr | Каталог browser-инструментов</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -12,43 +12,34 @@
       <div class="brand-block">
         <div class="mark">IN</div>
         <div>
-          <p class="eyebrow">Производственная платформа</p>
+          <p class="eyebrow">Внутренний toolbox</p>
           <h1>Instr</h1>
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-button" id="themeToggle" type="button" title="Режим плотности">Aa</button>
-        <a class="primary-link" href="#workspace">Открыть инструменты</a>
+        <button class="icon-button" id="themeToggle" type="button" title="Компактный режим">Aa</button>
+        <a class="primary-link" href="#workspace">К инструментам</a>
       </div>
     </header>
 
     <main>
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Локальная обработка файлов в браузере</p>
-          <h2>Единая витрина инструментов для цеха, офиса, качества, снабжения и управления.</h2>
+          <p class="eyebrow">Меню инструментов для работы в браузере</p>
+          <h2>Один каталог для данных, документов, производства, офиса, инженерии, ИИ, безопасности и повседневных задач.</h2>
           <div class="hero-metrics" aria-label="Сводка">
             <span><strong id="toolCount">0</strong> инструментов</span>
-            <span><strong>19</strong> направлений</span>
+            <span><strong id="categoryCount">0</strong> тем</span>
             <span><strong>11</strong> быстрых модулей</span>
           </div>
         </div>
-        <div class="factory-map" aria-label="Карта процессов компании">
-          <div class="map-row top" id="topProcessMap"></div>
-          <div class="map-axis">
-            <span>Процессы</span>
-            <span>Направления</span>
-            <span>Процессы</span>
-          </div>
-          <div class="map-row lanes" id="departmentMap"></div>
-          <div class="map-row bottom" id="bottomProcessMap"></div>
-        </div>
+        <div class="topic-board" id="topicBoard" aria-label="Темы инструментов"></div>
       </section>
 
       <section class="control-strip" id="workspace">
         <div class="search-box">
           <label for="searchInput">Поиск</label>
-          <input id="searchInput" type="search" placeholder="BOM, OEE, QR, финансы, персонал..." autocomplete="off" />
+          <input id="searchInput" type="search" placeholder="PDF, QR, OEE, AI, договор, фото, пароль, Excel..." autocomplete="off" />
         </div>
         <div class="segmented" id="statusFilters" aria-label="Статус"></div>
         <div class="segmented" id="typeFilters" aria-label="Тип"></div>
@@ -56,8 +47,8 @@
 
       <section class="layout">
         <aside class="sidebar">
-          <div class="panel-title">Направления</div>
-          <nav id="departmentFilters" class="nav-list" aria-label="Направления"></nav>
+          <div class="panel-title">Меню</div>
+          <nav id="categoryFilters" class="nav-list" aria-label="Темы"></nav>
         </aside>
 
         <section class="content-stack">
@@ -66,7 +57,7 @@
               <p class="eyebrow">Быстрые модули</p>
               <h3>Рабочая зона</h3>
             </div>
-            <div class="local-badge">Все данные остаются в браузере</div>
+            <div class="local-badge">Файлы и тексты обрабатываются локально в браузере</div>
           </div>
 
           <div class="tool-tabs" id="toolTabs"></div>
@@ -134,7 +125,7 @@ A-300,50,A</textarea>
             <section class="tool-panel" data-panel="quality">
               <div class="tool-grid two">
                 <label class="field wide">
-                  <span>Измерения</span>
+                  <span>Измерения или дефекты</span>
                   <textarea id="qualityValues" rows="9">10.04
 10.02
 10.01
@@ -194,6 +185,24 @@ A-300,50,A</textarea>
               </div>
             </section>
 
+            <section class="tool-panel" data-panel="text">
+              <div class="tool-grid two">
+                <label class="field wide">
+                  <span>Текст</span>
+                  <textarea id="textInput" rows="9">Нужно быстро привести текст в порядок, посчитать слова и сделать slug.</textarea>
+                </label>
+                <div class="result-card">
+                  <div class="mini-toolbar wrap">
+                    <button type="button" data-action="text-stats">Статистика</button>
+                    <button type="button" data-action="text-slug">Slug</button>
+                    <button type="button" data-action="text-lines">Строки</button>
+                    <button type="button" data-action="copy" data-target="textOutput">Копировать</button>
+                  </div>
+                  <pre id="textOutput"></pre>
+                </div>
+              </div>
+            </section>
+
             <section class="tool-panel" data-panel="security">
               <div class="tool-grid two">
                 <label class="field wide">
@@ -234,11 +243,11 @@ A-300,50,A</textarea>
           <div class="section-heading">
             <div>
               <p class="eyebrow">Каталог</p>
-              <h3>Инструменты по подразделениям</h3>
+              <h3 id="catalogTitle">Все инструменты</h3>
             </div>
-            <button id="exportBacklog" class="secondary-button" type="button">Экспорт backlog</button>
+            <button id="exportBacklog" class="secondary-button" type="button">Экспорт CSV</button>
           </div>
-          <div class="tool-catalog" id="toolCatalog"></div>
+          <div class="tool-catalog list-view" id="toolCatalog"></div>
         </section>
       </section>
     </main>
