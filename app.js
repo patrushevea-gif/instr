@@ -1,836 +1,558 @@
 const categories = [
-  { id: "data", name: "Данные и таблицы", summary: "CSV, Excel, JSON, SQL, отчеты" },
-  { id: "documents", name: "Документы и PDF", summary: "PDF, DOCX, шаблоны, сравнение" },
-  { id: "production", name: "Производство", summary: "OEE, такт, смены, мощности" },
-  { id: "quality", name: "Качество", summary: "SPC, дефекты, ОТК, СМК" },
-  { id: "engineering", name: "Инженерия и CAD", summary: "чертежи, 3D, допуски, расчеты" },
-  { id: "warehouse", name: "Склад и маркировка", summary: "QR, штрихкоды, GS1, паллеты" },
-  { id: "supply", name: "Снабжение", summary: "КП, поставщики, закупки" },
-  { id: "sales", name: "Продажи и пресейл", summary: "воронка, КП, тендеры, CRM" },
-  { id: "marketing", name: "Маркетинг", summary: "контент, рынок, SEO, кампании" },
-  { id: "finance", name: "Финансы", summary: "бюджет, план-факт, ДДС" },
-  { id: "hr", name: "HR и обучение", summary: "адаптация, матрицы, оценка" },
-  { id: "legal", name: "Право и договоры", summary: "риски, договоры, претензии" },
-  { id: "it", name: "IT и администрирование", summary: "доступы, инциденты, сервисы" },
-  { id: "security", name: "Безопасность", summary: "хэши, шифрование, ИБ, секреты" },
-  { id: "ai", name: "ИИ и промпты", summary: "промпты, оценка, RAG, агенты" },
-  { id: "dev", name: "Разработка", summary: "код, API, regex, форматтеры" },
-  { id: "web", name: "Веб и SEO", summary: "сайты, ссылки, headers, мета" },
-  { id: "media", name: "Медиа и изображения", summary: "фото, видео, OCR, metadata" },
-  { id: "text", name: "Текст", summary: "очистка, diff, slug, счетчики" },
-  { id: "personal", name: "Повседневные", summary: "калькуляторы, даты, пароли" },
-  { id: "logistics", name: "Логистика", summary: "маршруты, упаковка, перевозки" },
-  { id: "maintenance", name: "ТОиР", summary: "ремонты, простои, регламенты" },
-  { id: "safety", name: "ОТ, ПБ и экология", summary: "инструктажи, СИЗ, риски" },
-  { id: "service", name: "Сервис", summary: "заявки, работы, контроль качества" }
+  { id: "data", name: "Данные и таблицы" },
+  { id: "documents", name: "Документы" },
+  { id: "production", name: "Производство" },
+  { id: "quality", name: "Качество" },
+  { id: "engineering", name: "Инженерия" },
+  { id: "warehouse", name: "Склад и маркировка" },
+  { id: "supply", name: "Снабжение" },
+  { id: "sales", name: "Продажи" },
+  { id: "marketing", name: "Маркетинг" },
+  { id: "finance", name: "Финансы" },
+  { id: "hr", name: "Персонал и обучение" },
+  { id: "legal", name: "Право" },
+  { id: "it", name: "IT и администрирование" },
+  { id: "security", name: "Безопасность" },
+  { id: "ai", name: "Искусственный интеллект" },
+  { id: "dev", name: "Разработка" },
+  { id: "web", name: "Веб-сайты" },
+  { id: "media", name: "Медиа" },
+  { id: "text", name: "Текст" },
+  { id: "logistics", name: "Логистика" },
+  { id: "maintenance", name: "ТОиР" },
+  { id: "safety", name: "Охрана труда и экология" },
+  { id: "service", name: "Сервис" },
+  { id: "daily", name: "Повседневные задачи" }
 ];
 
-const toolTabs = [
-  ["csv", "CSV"],
-  ["bom", "BOM"],
-  ["production", "OEE"],
-  ["quality", "Качество"],
-  ["labels", "Этикетки"],
-  ["data", "Данные"],
-  ["text", "Текст"],
-  ["security", "Хэши"],
-  ["gs1", "GS1"],
-  ["universal", "Инструмент"]
-];
-
-const toolSeeds = {
+const toolGroups = {
   data: [
-    "CSV viewer", "CSV cleaner", "CSV delimiter detector", "CSV to JSON", "CSV to XLSX", "XLSX viewer", "XLSX to CSV", "XLSX to JSON",
-    "Excel duplicate finder", "Excel column profiler", "Excel sheet merger", "BOM importer", "BOM comparer", "Supplier quote comparer", "Price list normalizer",
-    "SQL over CSV", "SQL over Parquet", "JSON viewer", "JSON formatter", "JSON repair", "JSON schema generator", "JSON to TypeScript", "XML viewer",
-    "XML to JSON", "YAML formatter", "YAML to JSON", "Parquet preview", "Local pivot table", "Pareto from CSV", "Dashboard builder",
-    "Data dictionary builder", "Column mapping helper", "Encoding detector", "UTF-8 fixer", "Unit column normalizer", "Data quality report"
+    ["Просмотр CSV", "table"], ["Очистка CSV", "table"], ["Определение разделителя CSV", "parser"], ["CSV в JSON", "converter"],
+    ["CSV в Excel", "converter"], ["Просмотр Excel", "table"], ["Excel в CSV", "converter"], ["Excel в JSON", "converter"],
+    ["Поиск дублей в таблице", "table"], ["Профиль колонок таблицы", "table"], ["Объединение листов Excel", "table"],
+    ["Импорт спецификации", "table"], ["Сравнение спецификаций", "compare"], ["Сравнение коммерческих предложений", "compare"],
+    ["Нормализация прайс-листа", "table"], ["SQL-запрос по CSV", "table"], ["Просмотр JSON", "json"], ["Форматирование JSON", "json"],
+    ["Исправление JSON", "json"], ["Генератор схемы JSON", "json"], ["Просмотр XML", "parser"], ["XML в JSON", "converter"],
+    ["Форматирование YAML", "parser"], ["YAML в JSON", "converter"], ["Сводная таблица", "table"], ["Отчет о качестве данных", "table"]
   ],
   documents: [
-    "PDF merge", "PDF split", "PDF reorder", "PDF rotate", "PDF compress", "PDF metadata viewer", "PDF metadata remover", "PDF text extractor",
-    "PDF to image", "Images to PDF", "Markdown to PDF", "HTML to PDF", "DOCX text extractor", "DOCX template generator", "DOCX to HTML",
-    "PPTX summary generator", "Certificate generator", "Inspection report generator", "SOP builder", "Checklist PDF generator", "Document version diff",
-    "Contract redline checklist", "Document naming helper", "File batch renamer", "Archive manifest generator", "Cover sheet generator",
-    "Act template builder", "Meeting minutes builder", "Document approval tracker", "Stamp page generator", "Table of contents builder"
+    ["Объединение PDF", "document"], ["Разделение PDF", "document"], ["Поворот страниц PDF", "document"], ["Сжатие PDF", "document"],
+    ["Просмотр метаданных PDF", "parser"], ["Удаление метаданных PDF", "document"], ["Извлечение текста из PDF", "parser"],
+    ["PDF в изображения", "converter"], ["Изображения в PDF", "document"], ["Markdown в PDF", "document"],
+    ["Шаблон DOCX", "document"], ["Извлечение текста из DOCX", "parser"], ["Генератор сертификата", "document"],
+    ["Генератор акта", "document"], ["Генератор протокола встречи", "document"], ["Сравнение версий документа", "compare"],
+    ["Чек-лист согласования документа", "checklist"], ["Проверка названия файла", "checklist"], ["Реестр документов", "register"],
+    ["Титульный лист", "document"], ["Оглавление", "document"], ["Шаблон служебной записки", "document"]
   ],
   production: [
-    "OEE calculator", "Takt time calculator", "Cycle time calculator", "Capacity planner", "Line balancing helper", "Bottleneck finder", "Shift report analyzer",
-    "Downtime analyzer", "Production plan checker", "Batch size calculator", "Kanban calculator", "WIP calculator", "Throughput calculator", "Changeover time tracker",
-    "SMED checklist", "Scrap cost calculator", "Yield calculator", "FPY calculator", "RTY calculator", "Work order generator", "Job traveler generator",
-    "Production calendar", "Machine load board", "Daily management board", "Andon event log", "Operator instruction card", "Route sheet builder",
-    "Production loss tree", "Labor standard calculator", "Output forecast"
+    ["Калькулятор OEE", "calc"], ["Расчет такта", "calc"], ["Расчет времени цикла", "calc"], ["Планировщик мощности", "calc"],
+    ["Балансировка линии", "calc"], ["Поиск узкого места", "calc"], ["Анализ сменного отчета", "table"], ["Анализ простоев", "table"],
+    ["Проверка производственного плана", "checklist"], ["Расчет партии", "calc"], ["Расчет Kanban", "calc"], ["Расчет WIP", "calc"],
+    ["Расчет производительности", "calc"], ["Журнал переналадок", "register"], ["Чек-лист SMED", "checklist"], ["Расчет стоимости брака", "calc"],
+    ["Расчет выхода годной продукции", "calc"], ["Производственное задание", "document"], ["Маршрутный лист", "document"],
+    ["Календарь производства", "register"], ["Доска загрузки станков", "register"], ["Журнал производственных сигналов", "register"]
   ],
   quality: [
-    "Cp/Cpk calculator", "Pp/Ppk calculator", "Control chart builder", "X-bar R chart", "I-MR chart", "p-chart", "np-chart", "Histogram builder",
-    "Pareto chart", "Defect classifier", "NCR report builder", "8D report builder", "AQL helper", "Sampling plan calculator", "Gauge R&R helper",
-    "MSA worksheet", "Calibration due checker", "Incoming inspection checklist", "Final inspection checklist", "Supplier quality scorecard",
-    "Complaint register", "Root cause helper", "5 Why builder", "Ishikawa builder", "FMEA action tracker", "Audit checklist", "CAPA tracker",
-    "Quality cost calculator", "Certificate of analysis builder", "Traceability checker"
+    ["Калькулятор Cp/Cpk", "calc"], ["Калькулятор Pp/Ppk", "calc"], ["Контрольная карта", "calc"], ["Гистограмма", "calc"],
+    ["Диаграмма Парето", "table"], ["Классификатор дефектов", "register"], ["Отчет о несоответствии", "document"],
+    ["Отчет 8D", "document"], ["Расчет выборки AQL", "calc"], ["План контроля", "document"], ["Анализ повторяемости измерений", "calc"],
+    ["Лист MSA", "document"], ["Контроль сроков поверки", "register"], ["Чек-лист входного контроля", "checklist"],
+    ["Чек-лист финального контроля", "checklist"], ["Оценка поставщика по качеству", "table"], ["Реестр рекламаций", "register"],
+    ["Анализ корневой причины", "document"], ["Метод 5 почему", "document"], ["Диаграмма Исикавы", "document"], ["План корректирующих действий", "register"]
   ],
   engineering: [
-    "Unit converter", "Tolerance calculator", "Fit calculator", "Thread calculator", "Torque calculator", "Density weight calculator", "Paint consumption calculator",
-    "Sheet cutting calculator", "Rod cutting calculator", "DXF viewer", "STL viewer", "OBJ viewer", "STEP viewer", "IGES viewer", "G-code viewer",
-    "3D model metadata viewer", "Model screenshot generator", "Drill pattern generator", "Bolt circle calculator", "Bend allowance calculator",
-    "Gear ratio calculator", "Hydraulic cylinder calculator", "Pneumatic flow calculator", "Motor power calculator", "Bearing life calculator",
-    "Weld length calculator", "Cable section calculator", "Tolerance stack-up helper", "Engineering change note builder"
+    ["Конвертер единиц", "calc"], ["Калькулятор допусков", "calc"], ["Расчет посадок", "calc"], ["Расчет резьбы", "calc"],
+    ["Расчет момента затяжки", "calc"], ["Расчет массы по плотности", "calc"], ["Расчет расхода краски", "calc"],
+    ["Расчет раскроя листа", "calc"], ["Расчет раскроя прутка", "calc"], ["Просмотр DXF", "parser"], ["Просмотр STL", "parser"],
+    ["Просмотр STEP", "parser"], ["Просмотр G-code", "parser"], ["Метаданные 3D-модели", "parser"], ["Шаблон извещения об изменении", "document"],
+    ["Расчет отверстий по окружности", "calc"], ["Расчет гиба", "calc"], ["Расчет передаточного числа", "calc"], ["Расчет мощности двигателя", "calc"]
   ],
   warehouse: [
-    "QR generator", "QR scanner", "Barcode generator", "Barcode scanner", "Data Matrix generator", "GS1 parser", "GS1 label builder", "Serial number generator",
-    "Batch lot generator", "Pallet label generator", "Carton label generator", "Packing list generator", "Inventory CSV normalizer", "Stock aging report",
-    "ABC analysis", "Cycle count planner", "Bin location generator", "Warehouse map list", "Pick list builder", "Putaway helper", "Expiry date checker",
-    "FIFO checker", "Lot trace viewer", "Receiving checklist", "Shipment checklist", "Container loading helper", "Weight volume calculator"
+    ["Генератор QR-кода", "document"], ["Сканер QR-кода", "parser"], ["Генератор штрихкода", "document"], ["Сканер штрихкода", "parser"],
+    ["Генератор Data Matrix", "document"], ["Разбор GS1", "parser"], ["Этикетка GS1", "document"], ["Генератор серийных номеров", "register"],
+    ["Генератор партий", "register"], ["Этикетка паллеты", "document"], ["Этикетка короба", "document"], ["Упаковочный лист", "document"],
+    ["Нормализация складского CSV", "table"], ["Отчет по возрасту запасов", "table"], ["ABC-анализ", "table"], ["План циклической инвентаризации", "register"],
+    ["Генератор ячеек хранения", "register"], ["Лист отбора", "document"], ["Контроль FIFO", "checklist"], ["Проверка срока годности", "checklist"]
   ],
   supply: [
-    "Supplier register", "Supplier qualification checklist", "RFQ builder", "Quote comparison", "Purchase request builder", "Purchase order checker",
-    "Lead time tracker", "Incoterms helper", "Customs code note", "Delivery risk matrix", "Supplier scorecard", "Contract price tracker",
-    "Alternative material finder", "MOQ calculator", "Safety stock calculator", "Reorder point calculator", "Price variance report", "Logistics cost comparer",
-    "Tender supplier matrix", "Procurement savings tracker", "Claim to supplier builder", "Supplier audit planner"
+    ["Реестр поставщиков", "register"], ["Квалификация поставщика", "checklist"], ["Заявка на закупку", "document"], ["Запрос коммерческого предложения", "document"],
+    ["Сравнение предложений поставщиков", "compare"], ["Проверка заказа поставщику", "checklist"], ["Контроль срока поставки", "register"],
+    ["Справка по Incoterms", "document"], ["Матрица рисков поставки", "register"], ["Оценка поставщика", "table"], ["Трекер цен по договору", "register"],
+    ["Поиск альтернативного материала", "document"], ["Расчет минимальной партии", "calc"], ["Расчет страхового запаса", "calc"],
+    ["Точка заказа", "calc"], ["Отчет об отклонении цены", "table"], ["Расчет экономии закупок", "calc"], ["Претензия поставщику", "document"]
   ],
   sales: [
-    "Commercial offer builder", "Quote calculator", "Margin calculator", "Discount approval helper", "CRM import cleaner", "Lead scoring table", "Pipeline forecast",
-    "Tender pack checker", "Tender deadline calendar", "Product selector", "Customer requirement checklist", "Objection script builder", "Price waterfall",
-    "Sales plan fact", "Account plan builder", "Call report builder", "Meeting summary template", "Win loss analysis", "Retail assortment checker",
-    "Marketplace SKU card checklist", "Customer segmentation helper", "Contract handoff checklist"
+    ["Коммерческое предложение", "document"], ["Калькулятор цены", "calc"], ["Калькулятор маржи", "calc"], ["Согласование скидки", "document"],
+    ["Очистка импорта CRM", "table"], ["Оценка лида", "table"], ["Прогноз воронки продаж", "calc"], ["Проверка тендерного пакета", "checklist"],
+    ["Календарь тендеров", "register"], ["Подбор продукта", "document"], ["Чек-лист требований клиента", "checklist"], ["Скрипт работы с возражениями", "document"],
+    ["План-факт продаж", "table"], ["План по клиенту", "document"], ["Отчет о звонке", "document"], ["Анализ выигранных и проигранных сделок", "table"]
   ],
   marketing: [
-    "Market signal board", "Competitor price tracker", "Content brief builder", "SEO title checker", "Meta description checker", "UTM builder", "Campaign checklist",
-    "Landing page checklist", "Product portfolio matrix", "Brand mention log", "Social post formatter", "Image alt text helper", "Email subject tester",
-    "A/B test planner", "Survey builder", "Customer persona card", "NPS calculator", "Review classifier", "Keyword clustering sheet", "Marketing calendar"
+    ["Доска рыночных сигналов", "register"], ["Трекер цен конкурентов", "table"], ["Бриф на контент", "document"], ["Проверка SEO-заголовка", "text"],
+    ["Проверка метаописания", "text"], ["Генератор UTM-меток", "converter"], ["Чек-лист кампании", "checklist"], ["Чек-лист лендинга", "checklist"],
+    ["Матрица продуктового портфеля", "table"], ["Журнал упоминаний бренда", "register"], ["Форматирование поста", "text"], ["Подсказки для описания изображения", "text"],
+    ["План A/B-теста", "document"], ["Анкета для опроса", "document"], ["Портрет клиента", "document"], ["Калькулятор NPS", "calc"]
   ],
   finance: [
-    "Budget variance", "Plan fact report", "Cashflow planner", "Payment calendar", "Invoice checklist", "Cost center splitter", "Unit economics calculator",
-    "Break-even calculator", "Contribution margin", "Working capital calculator", "Receivables aging", "Payables aging", "Currency converter note",
-    "VAT helper", "Expense classifier", "CAPEX request builder", "ROI calculator", "NPV calculator", "IRR calculator", "Scenario planner",
-    "Management report builder", "Financial close checklist"
+    ["План-факт бюджета", "table"], ["Отчет план-факт", "table"], ["План движения денежных средств", "register"], ["Платежный календарь", "register"],
+    ["Проверка счета", "checklist"], ["Распределение по центрам затрат", "table"], ["Расчет юнит-экономики", "calc"], ["Точка безубыточности", "calc"],
+    ["Маржинальная прибыль", "calc"], ["Оборотный капитал", "calc"], ["Возраст дебиторской задолженности", "table"], ["Возраст кредиторской задолженности", "table"],
+    ["Классификатор расходов", "table"], ["Заявка на CAPEX", "document"], ["Расчет ROI", "calc"], ["Расчет NPV", "calc"], ["Расчет IRR", "calc"], ["Сценарный план", "document"]
   ],
   hr: [
-    "Onboarding checklist", "Training matrix", "Skill matrix", "Certification due checker", "Employee card builder", "Interview scorecard", "Adaptation plan",
-    "1-on-1 template", "Performance review helper", "Vacation planner", "Shift roster checker", "Payroll change checklist", "Motivation scheme calculator",
-    "Job description builder", "Internal policy builder", "Org chart list", "Headcount planner", "Exit interview template", "Training feedback analyzer"
+    ["Чек-лист адаптации", "checklist"], ["Матрица обучения", "register"], ["Матрица навыков", "table"], ["Контроль сроков обучения", "register"],
+    ["Карточка сотрудника", "document"], ["Оценочный лист интервью", "document"], ["План адаптации", "document"], ["Шаблон встречи 1-на-1", "document"],
+    ["Оценка эффективности", "document"], ["План отпусков", "register"], ["Проверка графика смен", "table"], ["Изменение оплаты труда", "checklist"],
+    ["Калькулятор мотивации", "calc"], ["Должностная инструкция", "document"], ["Локальный нормативный акт", "document"], ["План численности", "calc"]
   ],
   legal: [
-    "Contract checklist", "NDA checklist", "Specification checker", "Protocol of disagreements helper", "Claims generator", "Court deadline tracker",
-    "Legal risk matrix", "Power of attorney register", "Corporate action checklist", "Document package checklist", "Sanctions screening note",
-    "Personal data checklist", "IP rights checklist", "License terms register", "Counterparty card", "Contract obligation tracker",
-    "Warranty terms checker", "Complaint response builder"
+    ["Проверка договора", "checklist"], ["Проверка NDA", "checklist"], ["Проверка спецификации", "checklist"], ["Протокол разногласий", "document"],
+    ["Претензия", "document"], ["Судебный календарь", "register"], ["Матрица юридических рисков", "register"], ["Реестр доверенностей", "register"],
+    ["Корпоративный чек-лист", "checklist"], ["Комплект документов", "checklist"], ["Проверка персональных данных", "checklist"],
+    ["Проверка интеллектуальных прав", "checklist"], ["Реестр лицензий", "register"], ["Карточка контрагента", "document"], ["Трекер обязательств по договору", "register"]
   ],
   it: [
-    "Access matrix", "User access review", "Incident triage", "Service request form", "Asset register", "Configuration item card", "IP subnet calculator",
-    "DNS lookup note", "SSL expiry checker", "Header checker", "Log parser", "Bitrix import cleaner", "CSV to vCard", "Wi-Fi QR generator",
-    "API payload viewer", "Webhook tester spec", "Backup checklist", "Release checklist", "Change request builder", "Knowledge base article builder"
+    ["Матрица доступов", "register"], ["Пересмотр прав доступа", "checklist"], ["Классификация инцидента", "document"], ["Заявка в IT", "document"],
+    ["Реестр активов", "register"], ["Карточка конфигурации", "document"], ["Калькулятор IP-подсети", "calc"], ["Проверка срока SSL", "checklist"],
+    ["Проверка HTTP-заголовков", "parser"], ["Разбор журнала событий", "parser"], ["Очистка импорта в Битрикс", "table"], ["Контакты в vCard", "converter"],
+    ["QR-код Wi-Fi", "document"], ["Просмотр API-запроса", "json"], ["Чек-лист резервного копирования", "checklist"], ["Чек-лист релиза", "checklist"]
   ],
   security: [
-    "SHA-256 checksum", "MD5 checksum", "CRC32 checksum", "File hash comparer", "Password generator", "Passphrase generator", "Base64 file encoder",
-    "Base64 decoder", "AES-GCM encrypt note", "Encrypted file note", "JWT decoder", "Certificate viewer", "PEM formatter", "Secret sharing checklist",
-    "PII detector checklist", "Phishing report template", "Security incident note", "URL defanger", "Malicious link notes", "Risk register"
+    ["Контрольная сумма SHA-256", "security"], ["Контрольная сумма MD5", "security"], ["Сравнение хэшей файла", "compare"], ["Генератор пароля", "security"],
+    ["Генератор парольной фразы", "security"], ["Файл в Base64", "converter"], ["Base64 в текст", "converter"], ["Шифрование заметки", "security"],
+    ["Декодер JWT", "json"], ["Просмотр сертификата", "parser"], ["Форматирование PEM", "text"], ["Чек-лист передачи секрета", "checklist"],
+    ["Проверка персональных данных", "checklist"], ["Шаблон сообщения о фишинге", "document"], ["Заметка об инциденте ИБ", "document"], ["Обезвреживание ссылки", "text"]
   ],
   ai: [
-    "Prompt library", "Prompt evaluator", "Prompt diff", "System prompt checklist", "AI use-case register", "AI ROI calculator", "RAG source checklist",
-    "Dataset card builder", "Model risk checklist", "AI policy helper", "Agent task planner", "AI test cases builder", "LLM output rubric",
-    "Hallucination checklist", "AI red-team checklist", "Meeting summary prompt", "SOP generation prompt", "Email rewrite prompt", "Classifier prompt builder",
-    "Extraction schema builder", "Synthetic data prompt", "AI vendor comparison"
+    ["Библиотека промптов", "ai"], ["Оценка промпта", "ai"], ["Сравнение промптов", "compare"], ["Чек-лист системного промпта", "checklist"],
+    ["Реестр ИИ-кейсов", "register"], ["Расчет эффекта ИИ-кейса", "calc"], ["Чек-лист RAG-источников", "checklist"], ["Карточка набора данных", "document"],
+    ["Чек-лист рисков модели", "checklist"], ["Политика использования ИИ", "document"], ["План задачи для агента", "ai"], ["Тесты для ИИ-функции", "document"],
+    ["Рубрика оценки ответа LLM", "document"], ["Проверка галлюцинаций", "checklist"], ["Промпт для протокола встречи", "ai"], ["Промпт для инструкции", "ai"]
   ],
   dev: [
-    "Regex tester", "Regex explainer", "JSON formatter", "JWT decoder", "URL encoder", "HTML encoder", "CSS formatter", "SQL formatter", "Diff viewer",
-    "UUID generator", "NanoID generator", "Timestamp converter", "Cron expression helper", "Color converter", "SVG optimizer note", "OpenAPI viewer",
-    "GraphQL payload viewer", "HTTP status lookup", "MIME type lookup", "Lorem generator", "Markdown preview", "Mermaid preview", "Code snippet vault"
+    ["Тестер регулярного выражения", "text"], ["Объяснение регулярного выражения", "document"], ["Форматирование JSON", "json"], ["Декодер JWT", "json"],
+    ["URL-кодирование", "converter"], ["HTML-кодирование", "converter"], ["Форматирование CSS", "text"], ["Форматирование SQL", "text"],
+    ["Сравнение текста", "compare"], ["Генератор UUID", "document"], ["Конвертер Unix-времени", "calc"], ["Подсказка по расписанию cron", "document"],
+    ["Конвертер цветов", "converter"], ["Оптимизация SVG", "text"], ["Просмотр OpenAPI", "parser"], ["Справочник HTTP-статусов", "parser"]
   ],
   web: [
-    "Website checklist", "Robots.txt viewer", "Sitemap checker", "Open Graph preview", "Favicon checklist", "Link checker", "Broken URL list",
-    "UTM builder", "QR link card", "Page speed note", "Cookie checklist", "Privacy page checklist", "Accessibility checklist", "Contrast checker",
-    "Responsive breakpoint checklist", "Redirect map builder", "Canonical URL checker", "Schema.org note", "Landing QA checklist"
+    ["Чек-лист сайта", "checklist"], ["Просмотр robots.txt", "parser"], ["Проверка sitemap", "checklist"], ["Предпросмотр карточки ссылки", "document"],
+    ["Чек-лист favicon", "checklist"], ["Проверка ссылок", "checklist"], ["Список битых ссылок", "register"], ["Генератор UTM", "converter"],
+    ["QR-код ссылки", "document"], ["Заметка по скорости страницы", "document"], ["Чек-лист cookie", "checklist"], ["Чек-лист доступности", "checklist"],
+    ["Проверка контраста", "checklist"], ["Карта редиректов", "register"], ["Проверка канонической ссылки", "checklist"], ["Чек-лист проверки лендинга", "checklist"]
   ],
   media: [
-    "Image compressor", "Image resizer", "Image crop note", "EXIF viewer", "EXIF remover", "Image diff", "Color palette extractor", "SVG cleaner",
-    "PNG to WebP", "JPG to WebP", "Video frame extractor", "Audio duration checker", "OCR from image", "Drawing stamp OCR", "Label OCR",
-    "Thumbnail generator", "Watermark note", "Icon size checker", "File metadata viewer", "Media naming helper"
+    ["Сжатие изображения", "media"], ["Изменение размера изображения", "media"], ["Кадрирование изображения", "media"], ["Просмотр EXIF", "parser"],
+    ["Удаление EXIF", "media"], ["Сравнение изображений", "compare"], ["Палитра изображения", "media"], ["Очистка SVG", "text"],
+    ["PNG в WebP", "converter"], ["JPG в WebP", "converter"], ["Кадр из видео", "media"], ["Длительность аудио", "parser"],
+    ["OCR изображения", "parser"], ["OCR штампа чертежа", "parser"], ["OCR этикетки", "parser"], ["Проверка размеров иконки", "checklist"]
   ],
   text: [
-    "Text stats", "Line sorter", "Duplicate line remover", "Text diff", "Slug generator", "Case converter", "Transliteration helper", "Whitespace cleaner",
-    "Prefix suffix lines", "Find replace", "List comparer", "Markdown table builder", "CSV column from lines", "Email list cleaner", "Phone list cleaner",
-    "Part number normalizer", "Template renderer", "Checklist from text", "Meeting notes cleaner", "Instruction outline builder"
-  ],
-  personal: [
-    "Date calculator", "Workday calculator", "Time zone note", "Timer", "Stopwatch", "Random picker", "Decision matrix", "Priority matrix",
-    "Password generator", "Unit converter", "Percent calculator", "Loan calculator", "Fuel cost calculator", "Packing checklist", "Shopping list cleaner",
-    "Calendar CSV builder", "Contact card generator", "Reminder text builder"
+    ["Статистика текста", "text"], ["Сортировка строк", "text"], ["Удаление дублей строк", "text"], ["Сравнение текста", "compare"],
+    ["Генератор адресной строки", "text"], ["Смена регистра", "text"], ["Транслитерация", "text"], ["Очистка пробелов", "text"],
+    ["Префикс и суффикс строк", "text"], ["Поиск и замена", "text"], ["Сравнение списков", "compare"], ["Markdown-таблица", "document"],
+    ["Очистка списка почты", "text"], ["Очистка списка телефонов", "text"], ["Нормализация артикулов", "text"], ["Шаблонизатор текста", "document"]
   ],
   logistics: [
-    "Pallet calculator", "Carton calculator", "Truck loading checklist", "Volume weight calculator", "Route stop list", "Delivery note builder",
-    "Shipment cost comparer", "Container loading helper", "Incoterms helper", "Delivery SLA tracker", "Transport claim builder", "Warehouse dispatch board",
-    "Cargo label builder", "Temperature log checker", "Packaging material calculator", "Export document checklist"
+    ["Расчет паллет", "calc"], ["Расчет коробов", "calc"], ["Чек-лист загрузки машины", "checklist"], ["Объемный вес", "calc"],
+    ["Список остановок маршрута", "register"], ["Транспортная накладная", "document"], ["Сравнение стоимости доставки", "compare"],
+    ["Расчет загрузки контейнера", "calc"], ["Справка по Incoterms", "document"], ["Контроль SLA доставки", "register"], ["Претензия перевозчику", "document"],
+    ["Этикетка груза", "document"], ["Проверка температурного журнала", "checklist"], ["Расчет упаковочного материала", "calc"], ["Экспортный комплект документов", "checklist"]
   ],
   maintenance: [
-    "MTBF calculator", "MTTR calculator", "Downtime Pareto", "Maintenance checklist", "Preventive maintenance planner", "Equipment card",
-    "Spare parts list", "Failure log", "Work permit checklist", "Lubrication schedule", "Tool register", "Calibration planner",
-    "Repair act builder", "Maintenance KPI board", "Critical equipment matrix", "Service interval calculator"
+    ["Расчет MTBF", "calc"], ["Расчет MTTR", "calc"], ["Парето простоев", "table"], ["Чек-лист обслуживания", "checklist"],
+    ["План профилактического обслуживания", "register"], ["Карточка оборудования", "document"], ["Список запасных частей", "register"],
+    ["Журнал отказов", "register"], ["Наряд-допуск", "checklist"], ["График смазки", "register"], ["Реестр инструмента", "register"],
+    ["План калибровки", "register"], ["Акт ремонта", "document"], ["Показатели ТОиР", "table"], ["Матрица критичности оборудования", "register"]
   ],
   safety: [
-    "Safety briefing log", "PPE calculator", "Risk assessment matrix", "Job safety analysis", "Permit to work checklist", "Incident report",
-    "Near miss report", "Environmental aspect register", "Waste log", "Chemical compatibility note", "SDS checklist", "Fire inspection checklist",
-    "Training due checker", "Workplace audit", "Emergency drill checklist", "Legal requirement register"
+    ["Журнал инструктажей", "register"], ["Расчет потребности в СИЗ", "calc"], ["Матрица рисков", "register"], ["Анализ безопасности работ", "document"],
+    ["Наряд-допуск на работы", "checklist"], ["Отчет об инциденте", "document"], ["Сообщение о почти-инциденте", "document"],
+    ["Реестр экологических аспектов", "register"], ["Журнал отходов", "register"], ["Проверка паспорта безопасности", "checklist"],
+    ["Пожарный чек-лист", "checklist"], ["Контроль сроков обучения", "register"], ["Аудит рабочего места", "checklist"], ["Реестр требований охраны труда", "register"]
   ],
   service: [
-    "Service job card", "Paint service quote", "Customer complaint card", "Service quality checklist", "Equipment handover act", "Materials issue sheet",
-    "Work completion act", "Before after photo list", "Warranty case register", "Service schedule", "Technician route list", "Repeat work analyzer",
-    "Service margin calculator", "Client acceptance checklist", "Service KPI board"
+    ["Карточка сервисной заявки", "document"], ["Расчет услуги покраски", "calc"], ["Карточка жалобы клиента", "document"],
+    ["Чек-лист качества сервиса", "checklist"], ["Акт передачи оборудования", "document"], ["Лист выдачи материалов", "register"],
+    ["Акт выполненных работ", "document"], ["Список фото до и после", "checklist"], ["Реестр гарантийных случаев", "register"],
+    ["График сервиса", "register"], ["Маршрут техника", "register"], ["Анализ повторных работ", "table"], ["Маржа сервисной работы", "calc"], ["Приемка работ клиентом", "checklist"]
+  ],
+  daily: [
+    ["Калькулятор дат", "calc"], ["Калькулятор рабочих дней", "calc"], ["Заметка по часовым поясам", "document"], ["Таймер", "calc"],
+    ["Случайный выбор", "text"], ["Матрица решений", "table"], ["Матрица приоритетов", "table"], ["Генератор пароля", "security"],
+    ["Конвертер единиц", "calc"], ["Калькулятор процентов", "calc"], ["Кредитный калькулятор", "calc"], ["Чек-лист поездки", "checklist"],
+    ["Очистка списка покупок", "text"], ["CSV календаря", "register"], ["Карточка контакта", "document"], ["Текст напоминания", "document"]
   ]
 };
 
-const readyNames = new Set([
-  "CSV cleaner", "CSV to JSON", "BOM comparer", "OEE calculator", "Takt time calculator", "Cp/Cpk calculator", "Pareto chart",
-  "Serial number generator", "GS1 parser", "SHA-256 checksum", "JSON formatter", "JWT decoder", "Base64 decoder", "Text stats", "Slug generator"
-]);
+const descriptions = {
+  table: "Приводит строки или таблицу к понятной структуре, показывает сводку и готовит результат для копирования.",
+  document: "Создает аккуратный шаблон документа с разделами, ответственным, сроком и исходными пунктами.",
+  calc: "Считает показатели по введенным числам и параметрам, выводит сумму, среднее, диапазон и итоговый расчет.",
+  checklist: "Формирует чек-лист с ответственным и сроком по каждому пункту.",
+  register: "Собирает входные строки в реестр, который можно скопировать или выгрузить как CSV.",
+  compare: "Сравнивает два блока данных, разделенных строкой из трех дефисов, и показывает добавленные и удаленные пункты.",
+  converter: "Преобразует данные в нужный формат или готовит структурированный результат для переноса.",
+  parser: "Разбирает входные строки на ключи и значения, считает элементы и выводит результат в JSON.",
+  json: "Форматирует JSON, показывает ошибку разбора или строит производный результат для схемы и API.",
+  text: "Обрабатывает текст: считает символы и слова, очищает строки, сортирует и удаляет повторы.",
+  security: "Готовит безопасный результат локально в браузере: хэш, пароль, заметку или проверочный список.",
+  ai: "Формирует рабочий промпт, критерии проверки и структуру результата для ИИ-задачи.",
+  media: "Готовит план обработки медиафайла, параметры результата и чек-лист контроля качества."
+};
 
-const mvpNames = new Set([
-  "XLSX viewer", "SQL over CSV", "PDF merge", "PDF split", "QR generator", "Barcode generator", "Image compressor", "OCR from image",
-  "Regex tester", "Contract checklist", "Budget variance", "Training matrix", "Access matrix", "Prompt library", "Tender pack checker"
-]);
-
-const libraryCategories = new Set(["documents", "engineering", "warehouse", "media", "dev", "ai"]);
-
-const phraseRu = new Map([
-  ["CSV viewer", "Просмотр CSV"],
-  ["CSV cleaner", "Очистка CSV"],
-  ["CSV delimiter detector", "Определение разделителя CSV"],
-  ["CSV to JSON", "CSV в JSON"],
-  ["CSV to XLSX", "CSV в XLSX"],
-  ["XLSX viewer", "Просмотр XLSX"],
-  ["XLSX to CSV", "XLSX в CSV"],
-  ["XLSX to JSON", "XLSX в JSON"],
-  ["SQL over CSV", "SQL по CSV"],
-  ["SQL over Parquet", "SQL по Parquet"],
-  ["JSON to TypeScript", "JSON в TypeScript"],
-  ["XML to JSON", "XML в JSON"],
-  ["YAML to JSON", "YAML в JSON"],
-  ["PDF to image", "PDF в изображение"],
-  ["Images to PDF", "Изображения в PDF"],
-  ["Markdown to PDF", "Markdown в PDF"],
-  ["HTML to PDF", "HTML в PDF"],
-  ["DOCX to HTML", "DOCX в HTML"],
-  ["PNG to WebP", "PNG в WebP"],
-  ["JPG to WebP", "JPG в WebP"],
-  ["Base64 file encoder", "Кодирование файла в Base64"],
-  ["AES-GCM encrypt note", "Шифрование заметки AES-GCM"],
-  ["5 Why builder", "Конструктор 5 Why"],
-  ["8D report builder", "Конструктор отчета 8D"],
-  ["X-bar R chart", "Карта X-bar R"],
-  ["I-MR chart", "Карта I-MR"],
-  ["p-chart", "p-карта"],
-  ["np-chart", "np-карта"],
-  ["Wi-Fi QR generator", "Генератор Wi-Fi QR"],
-  ["G-code viewer", "Просмотр G-code"],
-  ["OpenAPI viewer", "Просмотр OpenAPI"],
-  ["GraphQL payload viewer", "Просмотр payload GraphQL"],
-  ["Robots.txt viewer", "Просмотр robots.txt"],
-  ["Schema.org note", "Заметка по Schema.org"],
-  ["Break-even calculator", "Калькулятор точки безубыточности"],
-  ["CRC32 checksum", "Контрольная сумма CRC32"],
-  ["Cp/Cpk calculator", "Калькулятор Cp/Cpk"],
-  ["Pp/Ppk calculator", "Калькулятор Pp/Ppk"],
-  ["SHA-256 checksum", "Контрольная сумма SHA-256"],
-  ["I-MR chart", "Карта I-MR"],
-  ["X-bar R chart", "Карта X-bar R"],
-  ["Near miss report", "Отчет о почти-инциденте"],
-  ["AI use-case register", "Реестр AI use-case"],
-  ["Work order generator", "Генератор производственного задания"],
-  ["Protocol of disagreements helper", "Помощник по протоколу разногласий"]
-]);
-
-const keepTerms = new Set([
-  "CSV", "TSV", "JSON", "XLSX", "PDF", "DOCX", "PPTX", "SQL", "BOM", "SPC", "MSA", "NCR", "CAPA", "FMEA",
-  "DXF", "STL", "OBJ", "STEP", "IGES", "QR", "GS1", "RFQ", "KPI", "CRM", "SEO", "UTM", "NPS", "VAT",
-  "CAPEX", "ROI", "NPV", "IRR", "HR", "IT", "SSL", "DNS", "API", "UUID", "MIME", "OpenAPI", "GraphQL",
-  "SVG", "PNG", "JPG", "WebP", "OCR", "EXIF", "MTBF", "MTTR", "SDS", "OEE", "SMED", "WIP", "FPY", "RTY",
-  "AQL", "JWT", "MD5", "CRC32", "AES", "PEM", "PII", "AI", "RAG", "LLM", "HTML", "CSS", "URL", "UTF", "IP",
-  "ABC", "AES-GCM", "Cp", "Cpk", "Pp", "Ppk", "NDA", "PPE", "QA", "SKU", "FIFO", "Pareto", "Parquet",
-  "TypeScript", "NanoID", "vCard", "Wi-Fi", "G-code", "X-bar", "I-MR", "Cookie", "Favicon", "Webhook"
-]);
-
-const wordRu = new Map(Object.entries({
-  ABC: "ABC", acceptance: "приемки", access: "доступов", accessibility: "доступности", account: "клиента", act: "акта", action: "действий",
-  adaptation: "адаптации", after: "после", agent: "агента", aging: "старения", allowance: "припуска", alt: "alt-текста",
-  alternative: "альтернатив", analysis: "анализа", analyzer: "анализатор", andon: "Andon", approval: "согласования",
-  archive: "архива", article: "статьи", aspect: "аспектов", assessment: "оценки", asset: "активов", assortment: "ассортимента",
-  attorney: "доверенностей", audio: "аудио", audit: "аудита", backup: "резервного копирования", balancing: "балансировки",
-  barcode: "штрихкодов", base: "базы", batch: "партий", bearing: "подшипника", before: "до", bend: "гиба", bin: "ячеек",
-  bitrix: "Битрикс", board: "доска", bolt: "болтов", bottleneck: "узких мест", brand: "бренда", brief: "брифа",
-  briefing: "инструктажа", broken: "битых", budget: "бюджета", builder: "конструктор", cable: "кабеля",
-  calculator: "калькулятор", calendar: "календарь", calibration: "калибровки", call: "звонка", campaign: "кампании",
-  canonical: "канонической ссылки", capacity: "мощности", capital: "капитала", card: "карточка", cargo: "груза",
-  carton: "коробов", case: "кейсов", cases: "кейсов", cashflow: "ДДС", cause: "причин", center: "центров",
-  certificate: "сертификата", certification: "сертификации", change: "изменений", changeover: "переналадки",
-  chart: "карта", checker: "проверка", checklist: "чек-лист", checksum: "контрольной суммы", chemical: "химии",
-  circle: "окружности", claim: "претензии", claims: "претензий", classifier: "классификатор", cleaner: "очистка",
-  client: "клиента", close: "закрытия", clustering: "кластеризации", code: "кодов", color: "цветов", column: "колонок",
-  commercial: "коммерческого", comparer: "сравнение", comparison: "сравнения", compatibility: "совместимости",
-  competitor: "конкурентов", complaint: "жалоб", completion: "завершения", compress: "сжатия", compressor: "сжатие",
-  configuration: "конфигураций", consumption: "расхода", contact: "контактов", container: "контейнера", content: "контента",
-  contents: "содержимого", contract: "договора", contrast: "контраста", contribution: "маржинальности", control: "контрольная",
-  converter: "конвертер", cookie: "cookie", corporate: "корпоративных", cost: "стоимости", count: "количества",
-  counterparty: "контрагента", court: "судебных", cover: "обложки", critical: "критичного", cron: "cron",
-  crop: "кадрирования", currency: "валют", customer: "клиента", customs: "таможенных", cutting: "раскроя",
-  cycle: "цикла", cylinder: "цилиндра", daily: "ежедневного", dashboard: "дашборд", data: "данных", dataset: "набора данных",
-  date: "дат", deadline: "сроков", decision: "решений", decoder: "декодер", defanger: "обезвреживание", defect: "дефектов",
-  delimiter: "разделителя", delivery: "доставки", density: "плотности", description: "описания", detector: "определитель",
-  dictionary: "словаря", diff: "сравнение", disagreements: "разногласий", discount: "скидки", dispatch: "отгрузки",
-  document: "документов", downtime: "простоев", drawing: "чертежа", drill: "сверления", due: "сроков", duplicate: "дубликатов",
-  duration: "длительности", economics: "экономики", email: "email", emergency: "аварийных", employee: "сотрудника",
-  encoder: "кодировщик", encoding: "кодировки", encrypt: "шифрование", encrypted: "зашифрованных", engineering: "инженерных",
-  environmental: "экологических", equipment: "оборудования", evaluator: "оценщик", event: "событий", excel: "Excel",
-  exit: "увольнения", expense: "расходов", expiry: "срока годности", explainer: "объяснение", export: "экспортных",
-  expression: "выражений", extraction: "извлечения", extractor: "извлечение", fact: "факта", failure: "отказов",
-  favicon: "favicon", feedback: "обратной связи", file: "файлов", final: "финального", financial: "финансового",
-  find: "поиск", finder: "поиск", fire: "пожарной", fit: "посадок", fixer: "исправление", flow: "потока",
-  forecast: "прогноза", form: "формы", formatter: "форматтер", frame: "кадров", from: "из", fuel: "топлива",
-  gauge: "измерительной системы", gear: "передаточного числа", generation: "генерации", generator: "генератор",
-  graph: "графа", hallucination: "галлюцинаций", handoff: "передачи", handover: "передачи", hash: "хэшей",
-  headcount: "численности", header: "заголовков", helper: "помощник", histogram: "гистограмма", hydraulic: "гидравлики",
-  icon: "иконок", image: "изображений", images: "изображений", import: "импорта", importer: "импорт", incident: "инцидентов",
-  incoming: "входного", incoterms: "Incoterms", inspection: "инспекции", instruction: "инструкций", internal: "внутренней",
-  interval: "интервала", interview: "собеседования", inventory: "инвентаря", invoice: "счета", ishikawa: "Ишикавы",
-  issue: "выдачи", item: "позиции", job: "работ", kanban: "Kanban", keyword: "ключевых слов", knowledge: "базы знаний",
-  label: "этикеток", labor: "трудозатрат", landing: "лендинга", lead: "лидов", legal: "юридических", length: "длины",
-  library: "библиотека", license: "лицензий", life: "ресурса", line: "линий", lines: "строк", link: "ссылок",
-  list: "списков", load: "загрузки", loading: "загрузки", loan: "кредита", local: "локальный", location: "локаций",
-  log: "журнал", logistics: "логистики", lookup: "справочник", lorem: "рыба-текста", loss: "потерь", lot: "партий",
-  lubrication: "смазки", machine: "станков", maintenance: "ТОиР", malicious: "опасных", management: "управленческого",
-  manifest: "манифеста", map: "карта", mapping: "сопоставления", margin: "маржи", markdown: "Markdown", market: "рынка",
-  marketing: "маркетинга", marketplace: "маркетплейса", material: "материалов", materials: "материалов", matrix: "матрица",
-  media: "медиа", meeting: "встречи", mention: "упоминаний", merge: "объединение", merger: "объединение", mermaid: "Mermaid",
-  meta: "мета", metadata: "метаданных", minutes: "протокола", miss: "почти-инцидентов", model: "модели", MOQ: "MOQ",
-  motivation: "мотивации", motor: "двигателя", naming: "именования", normalizer: "нормализация", note: "заметка", notes: "заметок", number: "номеров",
-  objection: "возражений", obligation: "обязательств", offer: "предложения", onboarding: "адаптации", open: "открытых",
-  operator: "оператора", optimizer: "оптимизатор", order: "заказа", org: "оргструктуры", outline: "структуры", output: "выпуска",
-  pack: "пакета", package: "пакета", packaging: "упаковки", packing: "упаковочного", page: "страницы", paint: "покраски",
-  palette: "палитры", pallet: "паллет", parser: "парсер", part: "артикулов", parts: "запчастей", passphrase: "парольной фразы",
-  password: "паролей", pattern: "шаблона", payables: "кредиторки", payload: "payload", payment: "платежей", payroll: "зарплатных",
-  percent: "процентов", performance: "эффективности", permit: "допуска", persona: "персоны", personal: "персональных",
-  of: "", on: "по", phishing: "фишинга", phone: "телефонов", photo: "фото", pick: "подбора", picker: "выбор", pipeline: "воронки",
-  pivot: "сводной", plan: "плана", planner: "планировщик", pneumatic: "пневматики", point: "точки", policy: "политики",
-  portfolio: "портфеля", post: "поста", power: "мощности", prefix: "префикса", preventive: "планового", preview: "предпросмотр",
-  price: "цен", priority: "приоритетов", privacy: "приватности", procurement: "закупок", product: "продукта",
-  production: "производства", profiler: "профиль", prompt: "промптов", protocol: "протокола", purchase: "закупки",
-  putaway: "размещения", qualification: "квалификации", quality: "качества", quote: "КП", random: "случайный",
-  ratio: "отношения", receivables: "дебиторки", receiving: "приемки", redirect: "редиректов", redline: "сравнения версий",
-  regex: "регулярных выражений", register: "реестр", release: "релиза", reminder: "напоминания", remover: "удаление",
-  renamer: "переименование", renderer: "рендерер", reorder: "переупорядочивание", repair: "ремонта", repeat: "повторных",
-  replace: "замены", report: "отчет", request: "заявки", requirement: "требований", resizer: "изменение размера",
-  response: "ответа", responsive: "адаптива", retail: "розницы", review: "проверки", rewrite: "переписывания",
-  rights: "прав", risk: "рисков", rod: "прутка", root: "корневых", roster: "графика", rotate: "поворот",
-  route: "маршрута", rubric: "рубрики", safety: "безопасности", sales: "продаж", sampling: "выборки",
-  sanctions: "санкций", savings: "экономии", scanner: "сканер", scenario: "сценариев", schedule: "графика",
-  schema: "схемы", scheme: "схемы", scorecard: "карта оценки", scoring: "скоринга", scrap: "брака",
-  screening: "проверки", screenshot: "скриншота", script: "скрипта", secret: "секретов", section: "сечения",
-  security: "безопасности", segmentation: "сегментации", selector: "подборщик", serial: "серийных", service: "сервиса",
-  sharing: "обмена", sheet: "листа", shift: "смены", shipment: "отгрузки", shopping: "покупок", signal: "сигналов",
-  sitemap: "sitemap", size: "размера", skill: "навыков", SKU: "SKU", SLA: "SLA", slug: "slug", snippet: "сниппетов",
-  social: "соцсетей", SOP: "SOP", sorter: "сортировка", source: "источников", spare: "запасных", spec: "спецификации",
-  specification: "спецификаций", speed: "скорости", split: "разделение", splitter: "разделение", stamp: "штампа",
-  standard: "норматива", stats: "статистика", status: "статуса", stock: "запасов", stop: "остановок", stopwatch: "секундомер",
-  subject: "темы", subnet: "подсетей", suffix: "суффикса", summary: "сводки", supplier: "поставщиков", survey: "опроса",
-  synthetic: "синтетических", system: "системного", table: "таблицы", takt: "такта", task: "задач", technician: "техника",
-  temperature: "температуры", template: "шаблона", tender: "тендера", terms: "условий", test: "тестов", tester: "тестер",
-  text: "текста", thread: "резьбы", throughput: "производительности", thumbnail: "миниатюр", time: "времени", to: "в",
-  timer: "таймер", timestamp: "timestamp", title: "заголовка", tolerance: "допусков", tool: "инструментов",
-  torque: "момента", trace: "трассировки", traceability: "прослеживаемости", tracker: "трекер", training: "обучения",
-  transliteration: "транслитерации", transport: "транспортных", traveler: "маршрутного листа", tree: "дерева",
-  triage: "триажа", truck: "грузовика", type: "типов", unit: "единиц", user: "пользователей", vacation: "отпусков",
-  variance: "отклонений", vault: "хранилище", vendor: "поставщиков", version: "версий", video: "видео", viewer: "просмотр",
-  volume: "объема", warehouse: "склада", warranty: "гарантии", waste: "отходов", waterfall: "водопада",
-  watermark: "водяного знака", webhook: "webhook", website: "сайта", weight: "веса", weld: "сварки",
-  whitespace: "пробелов", win: "побед", work: "работ", workday: "рабочих дней", working: "оборотного",
-  workplace: "рабочего места", worksheet: "листа", XML: "XML", YAML: "YAML", yield: "выхода", zone: "зоны"
-}));
-
-const tools = Object.entries(toolSeeds).flatMap(([category, names]) => names.map((name, index) => ({
-  name,
-  category,
-  status: "ready",
-  phase: readyNames.has(name) ? "specialized" : mvpNames.has(name) || index < 2 ? "generic-plus" : "generic",
-  type: "browser",
-  description: descriptionFor(name, category),
-  tags: tagsFor(name, category)
-}))).map((tool, index) => ({ ...tool, id: `tool-${index}` }));
+const tools = Object.entries(toolGroups).flatMap(([categoryId, items]) =>
+  items.map(([title, kind], index) => ({
+    id: `${categoryId}-${index}`,
+    title,
+    kind,
+    categoryId,
+    description: descriptions[kind]
+  }))
+);
 
 const state = {
-  category: "all",
-  status: "all",
-  type: "all",
+  categoryId: "all",
   query: "",
-  openToolId: null
+  activeToolId: tools[0].id
 };
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
 function init() {
-  renderTopicBoard();
-  renderFilters();
-  renderTabs();
+  renderCategories();
   renderCatalog();
-  bindActions();
+  openTool(state.activeToolId, false);
+  bindEvents();
   $("#toolCount").textContent = tools.length;
   $("#categoryCount").textContent = categories.length;
-  $("#readyCount").textContent = tools.filter((tool) => tool.status === "ready").length;
-  runDefaultOutputs();
 }
 
-function renderTopicBoard() {
-  $("#topicBoard").innerHTML = categories.slice(0, 12).map((category) => `
-    <button class="topic-chip" type="button" data-category="${category.id}">
-      <strong>${category.name}</strong>
-      <span>${countByCategory(category.id)} инструментов</span>
-    </button>
-  `).join("");
-}
-
-function renderFilters() {
-  const categoryButtons = [{ id: "all", name: "Все темы" }, ...categories].map((category) => {
-    const count = category.id === "all" ? tools.length : countByCategory(category.id);
-    return `<button type="button" data-filter-category="${category.id}"><span>${category.name}</span><small>${count}</small></button>`;
+function bindEvents() {
+  $("#searchInput").addEventListener("input", (event) => {
+    state.query = event.target.value.trim().toLowerCase();
+    renderCatalog();
   });
-  $("#categoryFilters").innerHTML = categoryButtons.join("");
-  $("#statusFilters").innerHTML = [
-    ["all", "Все"],
-    ["ready", "Рабочие"]
-  ].map(([value, label]) => `<button type="button" data-filter-status="${value}">${label}</button>`).join("");
-  $("#typeFilters").innerHTML = [
-    ["all", "Все типы"],
-    ["browser", "Browser"],
-    ["library", "Library"]
-  ].map(([value, label]) => `<button type="button" data-filter-type="${value}">${label}</button>`).join("");
-  syncActiveFilters();
+  $("#densityToggle").addEventListener("click", () => document.body.classList.toggle("compact"));
+  $("#runTool").addEventListener("click", runActiveTool);
+  $("#fillTemplate").addEventListener("click", fillTemplate);
+  $("#exportResult").addEventListener("click", exportResultAsCsv);
+  $("#copyResult").addEventListener("click", () => navigator.clipboard?.writeText($("#toolOutput").textContent || ""));
+  $("#exportCatalog").addEventListener("click", exportCatalog);
 }
 
-function renderTabs() {
-  $("#toolTabs").innerHTML = toolTabs.map(([id, label], index) => `<button type="button" class="${index === 0 ? "active" : ""}" data-tab="${id}">${label}</button>`).join("");
+function renderCategories() {
+  const items = [{ id: "all", name: "Все разделы" }, ...categories];
+  $("#categoryFilters").innerHTML = items.map((category) => {
+    const count = category.id === "all" ? tools.length : tools.filter((tool) => tool.categoryId === category.id).length;
+    return `<button type="button" class="${state.categoryId === category.id ? "active" : ""}" data-category="${category.id}">
+      <span>${category.name}</span><small>${count}</small>
+    </button>`;
+  }).join("");
+  $$("#categoryFilters button").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.categoryId = button.dataset.category;
+      renderCategories();
+      renderCatalog();
+    });
+  });
 }
 
 function renderCatalog() {
-  const filtered = tools.filter((tool) => {
-    const categoryMatch = state.category === "all" || tool.category === state.category;
-    const statusMatch = state.status === "all" || tool.status === state.status;
-    const typeMatch = state.type === "all" || tool.type === state.type;
-    const haystack = `${tool.name} ${toolTitle(tool.name)} ${tool.description} ${tool.tags.join(" ")} ${categoryName(tool.category)}`.toLowerCase();
-    const queryMatch = !state.query || haystack.includes(state.query.toLowerCase());
-    return categoryMatch && statusMatch && typeMatch && queryMatch;
+  const visible = tools.filter((tool) => {
+    const categoryMatch = state.categoryId === "all" || tool.categoryId === state.categoryId;
+    const query = `${tool.title} ${tool.description} ${categoryName(tool.categoryId)}`.toLowerCase();
+    return categoryMatch && (!state.query || query.includes(state.query));
   });
-
-  const title = state.category === "all" ? "Все инструменты" : categoryName(state.category);
-  $("#catalogTitle").textContent = `${title}: ${filtered.length}`;
-  $("#toolCatalog").innerHTML = filtered.map((tool) => `
+  $("#visibleCount").textContent = visible.length;
+  $("#catalogTitle").textContent = state.categoryId === "all" ? `Все инструменты: ${visible.length}` : `${categoryName(state.categoryId)}: ${visible.length}`;
+  $("#toolCatalog").innerHTML = visible.map((tool) => `
     <article class="tool-card">
-      <div>
-        <h4>${toolTitle(tool.name)}</h4>
-        <span class="status ${tool.status}">${statusLabel(tool.status)}</span>
-      </div>
+      <h4>${tool.title}</h4>
       <p>${tool.description}</p>
-      <div class="tag-row">
-        <span class="tag">${categoryName(tool.category)}</span>
-        <span class="tag">${tool.type}</span>
-        ${tool.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
-      </div>
-      <button class="tool-open" type="button" data-open-tool="${tool.id}">Открыть</button>
+      <button class="tool-open" type="button" data-tool="${tool.id}">Открыть</button>
     </article>
-  `).join("") || `<div class="tool-card"><h4>Ничего не найдено</h4><p>Смените фильтр или поисковый запрос.</p><div></div></div>`;
+  `).join("") || `<article class="tool-card"><h4>Ничего не найдено</h4><p>Измените запрос или выберите другой раздел.</p><span></span></article>`;
+  $$("#toolCatalog [data-tool]").forEach((button) => button.addEventListener("click", () => openTool(button.dataset.tool, true)));
 }
 
-function bindActions() {
-  document.addEventListener("click", (event) => {
-    const target = event.target.closest("button");
-    if (!target) return;
-
-    if (target.dataset.openTool) {
-      openTool(target.dataset.openTool);
-      return;
-    }
-
-    if (target.dataset.category) {
-      state.category = target.dataset.category;
-      syncActiveFilters();
-      renderCatalog();
-      document.querySelector("#workspace").scrollIntoView({ behavior: "smooth" });
-    }
-
-    if (target.dataset.filterCategory) {
-      state.category = target.dataset.filterCategory;
-      syncActiveFilters();
-      renderCatalog();
-    }
-
-    if (target.dataset.filterStatus) {
-      state.status = target.dataset.filterStatus;
-      syncActiveFilters();
-      renderCatalog();
-    }
-
-    if (target.dataset.filterType) {
-      state.type = target.dataset.filterType;
-      syncActiveFilters();
-      renderCatalog();
-    }
-
-    if (target.dataset.tab) {
-      activateTab(target.dataset.tab);
-    }
-
-    if (target.dataset.action) {
-      runAction(target.dataset.action, target.dataset.target);
-    }
-  });
-
-  $("#searchInput").addEventListener("input", (event) => {
-    state.query = event.target.value.trim();
-    renderCatalog();
-  });
-
-  $("#themeToggle").addEventListener("click", () => document.body.classList.toggle("compact"));
-  $("#exportBacklog").addEventListener("click", exportBacklog);
-  $("#hashFile").addEventListener("change", hashSelectedFile);
-}
-
-function syncActiveFilters() {
-  $$("[data-filter-category], [data-category]").forEach((button) => {
-    const value = button.dataset.filterCategory || button.dataset.category;
-    button.classList.toggle("active", value === state.category);
-  });
-  $$("[data-filter-status]").forEach((button) => button.classList.toggle("active", button.dataset.filterStatus === state.status));
-  $$("[data-filter-type]").forEach((button) => button.classList.toggle("active", button.dataset.filterType === state.type));
-}
-
-function activateTab(tab) {
-  $$("[data-tab]").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
-  $$("[data-panel]").forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === tab));
-}
-
-function runAction(action, target) {
-  const actions = {
-    "csv-clean": cleanCsv,
-    "csv-json": csvToJson,
-    "bom-compare": compareBom,
-    "production-calc": calculateProduction,
-    "quality-calc": calculateQuality,
-    "pareto-build": drawPareto,
-    "serial-generate": generateSerials,
-    "json-format": formatJson,
-    "base64-encode": base64Encode,
-    "base64-decode": base64Decode,
-    "url-encode": urlEncode,
-    "jwt-decode": decodeJwt,
-    "text-stats": textStats,
-    "text-slug": textSlug,
-    "text-lines": textLines,
-    "hash-text": hashText,
-    "gs1-parse": parseGs1,
-    "tool-run": runOpenedTool,
-    "tool-template": templateOpenedTool,
-    "tool-export": exportOpenedToolCsv,
-    "copy": () => copyOutput(target)
-  };
-  actions[action]?.();
-}
-
-function runDefaultOutputs() {
-  cleanCsv();
-  compareBom();
-  calculateProduction();
-  calculateQuality();
-  drawPareto();
-  generateSerials();
-  formatJson();
-  textStats();
-  hashText();
-  parseGs1();
-}
-
-function openTool(id) {
+function openTool(id, scroll) {
   const tool = tools.find((item) => item.id === id) || tools[0];
-  if (!tool) return;
-  state.openToolId = tool.id;
-  activateTab("universal");
-  $("#openedToolCategory").textContent = categoryName(tool.category);
-  $("#openedToolTitle").textContent = toolTitle(tool.name);
-  $("#openedToolMode").textContent = modeLabel(tool);
-  $("#openedToolInputLabel").textContent = inputLabelFor(tool);
-  $("#openedToolInput").value = sampleFor(tool);
-  renderOpenedToolParams(tool);
-  runOpenedTool();
-  document.querySelector("#toolRunner").scrollIntoView({ behavior: "smooth", block: "start" });
+  state.activeToolId = tool.id;
+  $("#activeCategory").textContent = categoryName(tool.categoryId);
+  $("#activeTitle").textContent = tool.title;
+  $("#activeDescription").textContent = tool.description;
+  $("#inputLabel").textContent = inputLabel(tool);
+  $("#toolInput").value = sampleInput(tool);
+  renderParams(tool);
+  runActiveTool();
+  if (scroll) $("#workbench").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function openedTool() {
-  return tools.find((tool) => tool.id === state.openToolId) || tools[0];
-}
-
-function renderOpenedToolParams(tool) {
-  const params = paramsFor(tool);
-  $("#openedToolParams").innerHTML = params.map((param) => `
+function renderParams(tool) {
+  const params = parameterSet(tool);
+  $("#toolParams").innerHTML = params.map((param) => `
     <label class="field">
       <span>${param.label}</span>
-      <input id="param-${param.id}" value="${param.value}" type="${param.type || "text"}" step="${param.step || "any"}" />
+      <input id="param-${param.id}" type="${param.type || "text"}" value="${param.value}" />
     </label>
   `).join("");
 }
 
-function runOpenedTool() {
-  const tool = openedTool();
-  if (!tool) return;
-  const input = $("#openedToolInput").value;
-  const params = collectParams();
-  $("#openedToolOutput").textContent = executeTool(tool, input, params);
+async function runActiveTool() {
+  const tool = activeTool();
+  const input = $("#toolInput").value;
+  const params = currentParams();
+  $("#toolOutput").textContent = await executeTool(tool, input, params);
 }
 
-function templateOpenedTool() {
-  const tool = openedTool();
-  if (!tool) return;
-  $("#openedToolInput").value = templateFor(tool);
-  runOpenedTool();
+function fillTemplate() {
+  const tool = activeTool();
+  $("#toolInput").value = templateInput(tool);
+  runActiveTool();
 }
 
-function exportOpenedToolCsv() {
-  const tool = openedTool();
-  if (!tool) return;
-  const output = $("#openedToolOutput").textContent || "";
+function exportResultAsCsv() {
+  const tool = activeTool();
   const rows = [
-    ["tool", "category", "result"],
-    [toolTitle(tool.name), categoryName(tool.category), output.replace(/\r?\n/g, " | ")]
+    ["Инструмент", "Раздел", "Результат"],
+    [tool.title, categoryName(tool.categoryId), ($("#toolOutput").textContent || "").replace(/\r?\n/g, " | ")]
   ];
-  $("#openedToolOutput").textContent = rows.map((row) => row.map(escapeCsv).join(",")).join("\n");
+  $("#toolOutput").textContent = toCsv(rows);
 }
 
-function collectParams() {
-  return Object.fromEntries($$("#openedToolParams input").map((input) => [input.id.replace("param-", ""), input.value]));
+function exportCatalog() {
+  const rows = [["Раздел", "Инструмент", "Описание"]];
+  tools.forEach((tool) => rows.push([categoryName(tool.categoryId), tool.title, tool.description]));
+  downloadText("instr-catalog.csv", toCsv(rows));
 }
 
-function executeTool(tool, input, params) {
-  const name = tool.name.toLowerCase();
-  const category = tool.category;
-  if (name.includes("json")) return tryJsonTool(name, input);
-  if (name.includes("csv")) return tryCsvTool(name, input);
-  if (name.includes("diff") || name.includes("compare") || name.includes("comparer")) return compareTextBlocks(input);
-  if (name.includes("calculator") || name.includes("calc") || ["production", "finance", "engineering", "logistics", "maintenance"].includes(category)) {
-    return numericTool(tool, input, params);
-  }
-  if (name.includes("checker") || name.includes("checklist") || name.includes("audit") || name.includes("review")) {
-    return checklistTool(tool, input, params);
-  }
-  if (name.includes("builder") || name.includes("generator") || name.includes("template") || name.includes("report")) {
-    return documentBuilderTool(tool, input, params);
-  }
-  if (name.includes("parser") || name.includes("viewer") || name.includes("extractor") || name.includes("detector")) {
-    return parserTool(tool, input, params);
-  }
-  if (name.includes("planner") || name.includes("tracker") || name.includes("register") || name.includes("matrix") || name.includes("board")) {
-    return registerTool(tool, input, params);
-  }
-  if (["ai", "marketing", "sales", "hr", "legal", "safety", "service", "supply", "it", "web", "media", "personal"].includes(category)) {
-    return structuredWorkspaceTool(tool, input, params);
-  }
-  return structuredWorkspaceTool(tool, input, params);
+async function executeTool(tool, input, params) {
+  if (tool.kind === "json") return jsonTool(tool, input);
+  if (tool.kind === "table") return tableTool(input);
+  if (tool.kind === "calc") return calcTool(tool, input, params);
+  if (tool.kind === "checklist") return checklistTool(input, params);
+  if (tool.kind === "register") return registerTool(input, params);
+  if (tool.kind === "compare") return compareTool(input);
+  if (tool.kind === "converter") return converterTool(tool, input);
+  if (tool.kind === "parser") return parserTool(tool, input);
+  if (tool.kind === "text") return textTool(tool, input);
+  if (tool.kind === "security") return securityTool(tool, input);
+  if (tool.kind === "ai") return aiTool(tool, input, params);
+  if (tool.kind === "media") return mediaTool(tool, input, params);
+  return documentTool(tool, input, params);
 }
 
-function tryJsonTool(name, input) {
-  try {
-    const data = JSON.parse(input);
-    if (name.includes("schema")) return JSON.stringify(schemaFromValue(data), null, 2);
-    if (name.includes("typescript")) return typeScriptFromValue("Root", data);
-    return JSON.stringify(data, null, 2);
-  } catch (error) {
-    return `JSON не разобран: ${error.message}\n\nИсправленная заготовка:\n${input.trim().replace(/,\s*([}\]])/g, "$1")}`;
-  }
-}
-
-function tryCsvTool(name, input) {
-  const rows = parseDelimited(input);
-  if (!rows.length) return "Нет строк для обработки.";
-  if (name.includes("json")) {
-    const [header, ...body] = rows;
-    return JSON.stringify(body.map((row) => Object.fromEntries(header.map((key, index) => [key || `col_${index + 1}`, row[index] || ""]))), null, 2);
-  }
-  const widths = rows[0].map((_, index) => Math.max(...rows.map((row) => String(row[index] || "").length)));
-  const preview = rows.map((row) => row.map((cell, index) => String(cell || "").padEnd(widths[index], " ")).join(" | ")).join("\n");
-  return `Строк: ${rows.length}\nКолонок: ${rows[0].length}\n\n${preview}`;
-}
-
-function compareTextBlocks(input) {
-  const [left = "", right = ""] = input.split(/\n---+\n/);
-  const leftLines = left.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const rightLines = right.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const added = rightLines.filter((line) => !leftLines.includes(line));
-  const removed = leftLines.filter((line) => !rightLines.includes(line));
-  const same = leftLines.filter((line) => rightLines.includes(line));
-  return JSON.stringify({ same: same.length, added, removed }, null, 2);
-}
-
-function numericTool(tool, input, params) {
-  const values = parseNumbers(input);
-  const sum = values.reduce((total, value) => total + value, 0);
-  const min = values.length ? Math.min(...values) : 0;
-  const max = values.length ? Math.max(...values) : 0;
-  const avg = average(values);
-  const rate = Number(params.rate || params.price || params.factor || 1) || 1;
-  const qty = Number(params.qty || values.length || 1) || 1;
+function tableTool(input) {
+  const rows = parseRows(input);
+  if (!rows.length) return "Нет данных для обработки.";
+  const columns = Math.max(...rows.map((row) => row.length));
+  const normalized = rows.map((row) => [...row, ...Array(columns - row.length).fill("")]);
   return [
-    `${toolTitle(tool.name)}`,
-    `Категория: ${categoryName(tool.category)}`,
-    `Количество значений: ${values.length}`,
-    `Сумма: ${round(sum)}`,
-    `Среднее: ${round(avg)}`,
-    `Мин/макс: ${round(min)} / ${round(max)}`,
-    `Параметр: ${round(rate)}`,
-    `Расчет: ${round(sum * rate || qty * rate)}`
+    `Строк: ${normalized.length}`,
+    `Колонок: ${columns}`,
+    "",
+    toCsv(normalized)
   ].join("\n");
 }
 
-function checklistTool(tool, input, params) {
-  const lines = inputLines(input);
-  const owner = params.owner || "Ответственный";
-  const due = params.due || new Date().toISOString().slice(0, 10);
-  return lines.map((line, index) => `${index + 1}. [ ] ${line} | ${owner} | срок: ${due}`).join("\n");
+function jsonTool(tool, input) {
+  try {
+    const value = JSON.parse(input);
+    if (tool.title.toLowerCase().includes("схем")) return JSON.stringify(schemaFromValue(value), null, 2);
+    return JSON.stringify(value, null, 2);
+  } catch (error) {
+    return `JSON не разобран: ${error.message}`;
+  }
 }
 
-function documentBuilderTool(tool, input, params) {
-  const lines = inputLines(input);
+function calcTool(tool, input, params) {
+  const values = parseNumbers(input);
+  const sum = values.reduce((total, value) => total + value, 0);
+  const avg = values.length ? sum / values.length : 0;
+  const factor = Number(params.factor || 1) || 1;
+  const qty = Number(params.qty || values.length || 1) || 1;
   return [
-    `# ${toolTitle(tool.name)}`,
-    `Тема: ${categoryName(tool.category)}`,
-    `Владелец: ${params.owner || "не указан"}`,
-    `Дата: ${params.due || new Date().toISOString().slice(0, 10)}`,
+    tool.title,
+    `Значений: ${values.length}`,
+    `Сумма: ${formatNumber(sum)}`,
+    `Среднее: ${formatNumber(avg)}`,
+    `Минимум: ${formatNumber(values.length ? Math.min(...values) : 0)}`,
+    `Максимум: ${formatNumber(values.length ? Math.max(...values) : 0)}`,
+    `Расчет: ${formatNumber((sum || qty) * factor)}`
+  ].join("\n");
+}
+
+function checklistTool(input, params) {
+  return inputLines(input).map((line, index) => `${index + 1}. [ ] ${line} | ${params.owner} | ${params.due}`).join("\n");
+}
+
+function registerTool(input, params) {
+  const rows = [["ID", "Пункт", "Ответственный", "Статус", "Срок"]];
+  inputLines(input).forEach((line, index) => rows.push([index + 1, line, params.owner, params.status, params.due]));
+  return toCsv(rows);
+}
+
+function compareTool(input) {
+  const [left = "", right = ""] = input.split(/\n---+\n/);
+  const a = inputLines(left);
+  const b = inputLines(right);
+  const added = b.filter((line) => !a.includes(line));
+  const removed = a.filter((line) => !b.includes(line));
+  return JSON.stringify({ совпало: a.filter((line) => b.includes(line)).length, добавлено: added, удалено: removed }, null, 2);
+}
+
+function converterTool(tool, input) {
+  const title = tool.title.toLowerCase();
+  if (title.includes("base64") && title.includes("текст")) return decodeBase64(input);
+  if (title.includes("base64")) return encodeBase64(input);
+  if (title.includes("url")) return encodeURIComponent(input);
+  if (title.includes("json")) return JSON.stringify(rowsToObjects(parseRows(input)), null, 2);
+  return documentTool(tool, input, defaultParams());
+}
+
+function parserTool(tool, input) {
+  const pairs = inputLines(input).map((line) => {
+    const [key, ...rest] = line.split(/[:=;]/);
+    return { ключ: (key || "").trim(), значение: rest.join(":").trim() || line.trim() };
+  });
+  return JSON.stringify({ инструмент: tool.title, строк: pairs.length, данные: pairs }, null, 2);
+}
+
+function textTool(tool, input) {
+  const title = tool.title.toLowerCase();
+  const lines = inputLines(input);
+  if (title.includes("адрес")) return slugify(input);
+  if (title.includes("дубл")) return [...new Set(lines)].join("\n");
+  if (title.includes("сорт")) return [...lines].sort((a, b) => a.localeCompare(b, "ru")).join("\n");
+  if (title.includes("регистр")) return `${input.toUpperCase()}\n\n${input.toLowerCase()}`;
+  return JSON.stringify({
+    символов: input.length,
+    без_пробелов: input.replace(/\s/g, "").length,
+    слов: input.trim().split(/\s+/).filter(Boolean).length,
+    строк: input.split(/\r?\n/).length
+  }, null, 2);
+}
+
+async function securityTool(tool, input) {
+  const title = tool.title.toLowerCase();
+  if (title.includes("парол")) return generatePassword(title.includes("фраз"));
+  if (title.includes("md5")) return simpleChecksum(input);
+  if (title.includes("sha")) return sha256(input);
+  if (title.includes("ссылка")) return input.replaceAll(".", "[.]").replace(/^http/i, "hxxp");
+  return documentTool(tool, input, defaultParams());
+}
+
+function aiTool(tool, input, params) {
+  return [
+    `Задача: ${tool.title}`,
+    `Роль: эксперт по теме "${categoryName(tool.categoryId)}"`,
+    `Контекст: ${inputLines(input).join("; ")}`,
+    `Формат ответа: список действий, риски, ожидаемый результат`,
+    `Критерии проверки: точность, полнота, применимость`,
+    `Ответственный: ${params.owner}`
+  ].join("\n");
+}
+
+function mediaTool(tool, input, params) {
+  return [
+    tool.title,
+    `Исходные файлы или требования: ${inputLines(input).join("; ")}`,
+    `Параметры результата: размер, формат, качество, имя файла`,
+    `Контроль: проверить читаемость, вес файла и отсутствие лишних метаданных`,
+    `Ответственный: ${params.owner}`
+  ].join("\n");
+}
+
+function documentTool(tool, input, params) {
+  return [
+    `# ${tool.title}`,
+    `Раздел: ${categoryName(tool.categoryId)}`,
+    `Ответственный: ${params.owner}`,
+    `Срок: ${params.due}`,
     "",
-    "## Входные данные",
-    ...lines.map((line) => `- ${line}`),
+    "## Исходные данные",
+    ...inputLines(input).map((line) => `- ${line}`),
     "",
     "## Результат",
     "- Цель",
-    "- Область применения",
     "- Действия",
     "- Контроль",
     "- Следующий шаг"
   ].join("\n");
 }
 
-function parserTool(tool, input) {
-  const lines = inputLines(input);
-  const pairs = lines.map((line) => {
-    const [key, ...rest] = line.split(/[:=;]/);
-    return { key: (key || "").trim(), value: rest.join(":").trim() || line.trim() };
-  });
-  return JSON.stringify({
-    tool: toolTitle(tool.name),
-    lines: lines.length,
-    pairs
-  }, null, 2);
-}
-
-function registerTool(tool, input, params) {
-  const lines = inputLines(input);
-  const header = ["id", "name", "owner", "status", "due_date"];
-  const rows = lines.map((line, index) => [
-    index + 1,
-    line,
-    params.owner || "Ответственный",
-    params.status || "В работе",
-    params.due || new Date().toISOString().slice(0, 10)
-  ]);
-  return [header, ...rows].map((row) => row.map(escapeCsv).join(",")).join("\n");
-}
-
-function structuredWorkspaceTool(tool, input, params) {
-  const lines = inputLines(input);
-  return [
-    `${toolTitle(tool.name)}`,
-    `Категория: ${categoryName(tool.category)}`,
-    `Режим: ${modeLabel(tool)}`,
-    "",
-    "Вход:",
-    ...lines.map((line) => `- ${line}`),
-    "",
-    "Рабочий результат:",
-    `1. Сформировать список: ${lines.length} пунктов`,
-    `2. Назначить владельца: ${params.owner || "Ответственный"}`,
-    `3. Зафиксировать статус: ${params.status || "В работе"}`,
-    `4. Срок: ${params.due || new Date().toISOString().slice(0, 10)}`,
-    "5. Экспортировать результат или перенести в корпоративную систему"
-  ].join("\n");
-}
-
-function schemaFromValue(value) {
-  if (Array.isArray(value)) return { type: "array", items: schemaFromValue(value[0] ?? "") };
-  if (value && typeof value === "object") return { type: "object", properties: Object.fromEntries(Object.entries(value).map(([key, item]) => [key, schemaFromValue(item)])) };
-  return { type: typeof value };
-}
-
-function typeScriptFromValue(name, value) {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return `type ${name} = ${typeof value};`;
-  const lines = Object.entries(value).map(([key, item]) => `  ${key}: ${Array.isArray(item) ? "unknown[]" : typeof item};`);
-  return `interface ${name} {\n${lines.join("\n")}\n}`;
-}
-
-function paramsFor(tool) {
-  if (tool.name.toLowerCase().includes("calculator") || ["finance", "production", "engineering", "logistics"].includes(tool.category)) {
+function parameterSet(tool) {
+  if (tool.kind === "calc") {
     return [
-      { id: "factor", label: "Коэффициент", value: "1", type: "number" },
-      { id: "qty", label: "Количество", value: "1", type: "number" }
+      { id: "factor", label: "Коэффициент", value: "1" },
+      { id: "qty", label: "Количество", value: "1" }
     ];
   }
   return [
-    { id: "owner", label: "Владелец", value: "Ответственный" },
+    { id: "owner", label: "Ответственный", value: "Исполнитель" },
     { id: "status", label: "Статус", value: "В работе" },
-    { id: "due", label: "Срок", value: new Date().toISOString().slice(0, 10), type: "date" }
+    { id: "due", label: "Срок", value: today(), type: "date" }
   ];
 }
 
-function sampleFor(tool) {
-  const name = tool.name.toLowerCase();
-  if (name.includes("json")) return "{\"name\":\"example\",\"qty\":10,\"status\":\"ready\"}";
-  if (name.includes("csv")) return "name;qty;status\nA;10;ready\nB;5;check";
-  if (name.includes("diff") || name.includes("compare")) return "A-100\nA-200\n---\nA-100\nA-300";
-  if (name.includes("calculator") || name.includes("calc")) return "10\n20\n30";
-  return [
-    "Входной пункт 1",
-    "Входной пункт 2",
-    "Входной пункт 3"
-  ].join("\n");
+function sampleInput(tool) {
+  if (tool.kind === "json") return "{\"номер\":\"WO-1024\",\"количество\":120,\"статус\":\"готово\"}";
+  if (tool.kind === "table") return "Артикул;Наименование;Количество\nA-100;Корпус;12\nA-200;Крышка;12";
+  if (tool.kind === "compare") return "A-100\nA-200\n---\nA-100\nA-300";
+  if (tool.kind === "calc") return "10\n20\n30";
+  if (tool.kind === "security") return "Проверяемая строка или секрет";
+  return "Пункт 1\nПункт 2\nПункт 3";
 }
 
-function templateFor(tool) {
+function templateInput(tool) {
   return [
-    `${toolTitle(tool.name)}`,
-    `Категория: ${categoryName(tool.category)}`,
+    tool.title,
     "Цель:",
-    "Входные данные:",
+    "Исходные данные:",
     "Ограничения:",
     "Ожидаемый результат:"
   ].join("\n");
 }
 
-function inputLabelFor(tool) {
-  if (tool.name.toLowerCase().includes("calculator")) return "Числа или параметры";
-  if (tool.name.toLowerCase().includes("compare") || tool.name.toLowerCase().includes("diff")) return "Два блока через строку ---";
+function inputLabel(tool) {
+  if (tool.kind === "calc") return "Числа для расчета";
+  if (tool.kind === "compare") return "Два блока через строку ---";
+  if (tool.kind === "json") return "JSON";
+  if (tool.kind === "table") return "Таблица или CSV";
   return "Входные данные";
 }
 
-function modeLabel(tool) {
-  if (tool.phase === "specialized") return "Специализированный модуль";
-  if (tool.phase === "generic-plus") return "Рабочий MVP-модуль";
-  return "Универсальный рабочий модуль";
+function activeTool() {
+  return tools.find((tool) => tool.id === state.activeToolId) || tools[0];
 }
 
-function inputLines(input) {
-  return input.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+function currentParams() {
+  const params = {};
+  $$("#toolParams input").forEach((input) => {
+    params[input.id.replace("param-", "")] = input.value;
+  });
+  return { ...defaultParams(), ...params };
 }
 
-function parseDelimited(text) {
-  const lines = text.trim().split(/\r?\n/).filter(Boolean);
+function defaultParams() {
+  return { owner: "Исполнитель", status: "В работе", due: today(), factor: "1", qty: "1" };
+}
+
+function categoryName(id) {
+  return categories.find((category) => category.id === id)?.name || id;
+}
+
+function parseRows(input) {
+  const lines = inputLines(input);
   const delimiter = detectDelimiter(lines[0] || "");
   return lines.map((line) => splitLine(line, delimiter).map((cell) => cell.trim()));
 }
 
 function detectDelimiter(line) {
-  const candidates = [",", ";", "\t", "|"];
-  return candidates.map((delimiter) => [delimiter, (line.match(new RegExp(`\\${delimiter}`, "g")) || []).length])
-    .sort((a, b) => b[1] - a[1])[0][0];
+  const candidates = [";", ",", "\t", "|"];
+  return candidates.map((delimiter) => [delimiter, (line.match(new RegExp(`\\${delimiter}`, "g")) || []).length]).sort((a, b) => b[1] - a[1])[0][0];
 }
 
 function splitLine(line, delimiter) {
@@ -849,16 +571,27 @@ function splitLine(line, delimiter) {
   return cells;
 }
 
-function cleanCsv() {
-  const rows = parseDelimited($("#csvInput").value);
-  const width = Math.max(...rows.map((row) => row.length));
-  $("#csvOutput").textContent = rows.map((row) => [...row, ...Array(width - row.length).fill("")].map(escapeCsv).join(",")).join("\n");
+function rowsToObjects(rows) {
+  const [header = [], ...body] = rows;
+  return body.map((row) => Object.fromEntries(header.map((key, index) => [key || `Колонка ${index + 1}`, row[index] || ""])));
 }
 
-function csvToJson() {
-  const [header, ...rows] = parseDelimited($("#csvInput").value);
-  const json = rows.map((row) => Object.fromEntries(header.map((key, index) => [key || `col_${index + 1}`, row[index] || ""])));
-  $("#csvOutput").textContent = JSON.stringify(json, null, 2);
+function schemaFromValue(value) {
+  if (Array.isArray(value)) return { type: "array", items: schemaFromValue(value[0] ?? "") };
+  if (value && typeof value === "object") return { type: "object", properties: Object.fromEntries(Object.entries(value).map(([key, item]) => [key, schemaFromValue(item)])) };
+  return { type: typeof value };
+}
+
+function parseNumbers(input) {
+  return input.split(/[\s,;]+/).map((value) => Number(value.replace(",", "."))).filter(Number.isFinite);
+}
+
+function inputLines(input) {
+  return input.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+}
+
+function toCsv(rows) {
+  return rows.map((row) => row.map(escapeCsv).join(",")).join("\n");
 }
 
 function escapeCsv(value) {
@@ -866,308 +599,55 @@ function escapeCsv(value) {
   return /[",\n]/.test(text) ? `"${text.replaceAll("\"", "\"\"")}"` : text;
 }
 
-function compareBom() {
-  const oldRows = rowsToObjects(parseDelimited($("#bomOld").value));
-  const newRows = rowsToObjects(parseDelimited($("#bomNew").value));
-  const oldMap = new Map(oldRows.map((row) => [keyForPart(row), row]));
-  const newMap = new Map(newRows.map((row) => [keyForPart(row), row]));
-  const result = [];
-
-  for (const [part, row] of newMap) {
-    if (!oldMap.has(part)) result.push({ status: "added", part, current: row });
-    else {
-      const previous = oldMap.get(part);
-      const changes = Object.keys({ ...previous, ...row }).filter((key) => String(previous[key] || "") !== String(row[key] || ""));
-      if (changes.length) result.push({ status: "changed", part, changes, previous, current: row });
-    }
-  }
-
-  for (const [part, row] of oldMap) {
-    if (!newMap.has(part)) result.push({ status: "removed", part, previous: row });
-  }
-
-  $("#bomOutput").textContent = JSON.stringify(result, null, 2);
-}
-
-function rowsToObjects(rows) {
-  const [header, ...body] = rows;
-  return body.map((row) => Object.fromEntries(header.map((key, index) => [key.toLowerCase(), row[index] || ""])));
-}
-
-function keyForPart(row) {
-  return String(row.part || row.sku || row["артикул"] || Object.values(row)[0] || "").toUpperCase();
-}
-
-function calculateProduction() {
-  const planned = num("plannedTime");
-  const downtime = num("downtime");
-  const idealCycle = num("idealCycle");
-  const total = num("totalCount");
-  const good = num("goodCount");
-  const demand = num("demand");
-  const runTime = Math.max(planned - downtime, 0);
-  const availability = safe(runTime / planned);
-  const performance = safe((idealCycle * total) / (runTime * 60));
-  const quality = safe(good / total);
-  const oee = availability * performance * quality;
-  const takt = safe((planned * 60) / demand);
-
-  $("#productionOutput").innerHTML = metrics([
-    ["Availability", pct(availability)],
-    ["Performance", pct(performance)],
-    ["Quality", pct(quality)],
-    ["OEE", pct(oee)],
-    ["Takt", `${round(takt)} сек/шт`],
-    ["Run time", `${round(runTime)} мин`]
-  ]);
-}
-
-function calculateQuality() {
-  const values = parseNumbers($("#qualityValues").value);
-  const lsl = num("lsl");
-  const usl = num("usl");
-  const target = num("target");
-  const mean = average(values);
-  const sigma = stdev(values);
-  const cp = safe((usl - lsl) / (6 * sigma));
-  const cpk = Math.min(safe((usl - mean) / (3 * sigma)), safe((mean - lsl) / (3 * sigma)));
-  $("#qualityOutput").innerHTML = metrics([
-    ["N", values.length],
-    ["Mean", round(mean, 4)],
-    ["Sigma", round(sigma, 4)],
-    ["Cp", round(cp, 3)],
-    ["Cpk", round(cpk, 3)],
-    ["Offset", round(mean - target, 4)]
-  ]);
-}
-
-function drawPareto() {
-  const values = $("#qualityValues").value.trim().split(/\r?\n/).map((value) => value.trim()).filter(Boolean);
-  const counts = [...values.reduce((map, value) => map.set(value, (map.get(value) || 0) + 1), new Map())]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 12);
-  const canvas = $("#paretoCanvas");
-  const context = canvas.getContext("2d");
-  const width = canvas.width;
-  const height = canvas.height;
-  context.clearRect(0, 0, width, height);
-  context.fillStyle = "#ffffff";
-  context.fillRect(0, 0, width, height);
-  const max = Math.max(...counts.map(([, count]) => count), 1);
-  const barWidth = (width - 90) / Math.max(counts.length, 1);
-
-  context.fillStyle = "#09396c";
-  counts.forEach(([label, count], index) => {
-    const barHeight = (height - 80) * (count / max);
-    const x = 50 + index * barWidth;
-    const y = height - 38 - barHeight;
-    context.fillRect(x, y, Math.max(barWidth - 10, 8), barHeight);
-    context.fillStyle = "#17202a";
-    context.font = "12px Segoe UI";
-    context.fillText(String(label).slice(0, 9), x, height - 16);
-    context.fillText(count, x, y - 8);
-    context.fillStyle = "#09396c";
-  });
-}
-
-function generateSerials() {
-  const prefix = $("#serialPrefix").value;
-  const start = num("serialStart");
-  const count = Math.max(0, Math.min(num("serialCount"), 1000));
-  const part = $("#serialPart").value;
-  const lines = ["serial,part,created_at"];
-  const today = new Date().toISOString().slice(0, 10);
-  for (let index = 0; index < count; index += 1) lines.push(`${prefix}${start + index},${part},${today}`);
-  $("#serialOutput").textContent = lines.join("\n");
-}
-
-function formatJson() {
-  try {
-    $("#dataOutput").textContent = JSON.stringify(JSON.parse($("#dataInput").value), null, 2);
-  } catch (error) {
-    $("#dataOutput").textContent = error.message;
-  }
-}
-
-function base64Encode() {
-  $("#dataOutput").textContent = btoa(unescape(encodeURIComponent($("#dataInput").value)));
-}
-
-function base64Decode() {
-  try {
-    $("#dataOutput").textContent = decodeURIComponent(escape(atob($("#dataInput").value.trim())));
-  } catch (error) {
-    $("#dataOutput").textContent = error.message;
-  }
-}
-
-function urlEncode() {
-  $("#dataOutput").textContent = encodeURIComponent($("#dataInput").value);
-}
-
-function decodeJwt() {
-  try {
-    const [header, payload] = $("#dataInput").value.trim().split(".");
-    $("#dataOutput").textContent = JSON.stringify({
-      header: JSON.parse(base64UrlDecode(header)),
-      payload: JSON.parse(base64UrlDecode(payload))
-    }, null, 2);
-  } catch (error) {
-    $("#dataOutput").textContent = error.message;
-  }
-}
-
-function base64UrlDecode(value = "") {
-  const padded = value.replaceAll("-", "+").replaceAll("_", "/").padEnd(Math.ceil(value.length / 4) * 4, "=");
-  return decodeURIComponent(escape(atob(padded)));
-}
-
-function textStats() {
-  const text = $("#textInput").value;
-  const words = text.trim().split(/\s+/).filter(Boolean);
-  $("#textOutput").textContent = JSON.stringify({
-    characters: text.length,
-    charactersNoSpaces: text.replace(/\s/g, "").length,
-    words: words.length,
-    lines: text.split(/\r?\n/).length,
-    sentences: text.split(/[.!?]+/).filter((value) => value.trim()).length
-  }, null, 2);
-}
-
-function textSlug() {
-  const translit = {
-    а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "y", к: "k", л: "l", м: "m",
-    н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "h", ц: "c", ч: "ch", ш: "sh", щ: "sch",
-    ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya"
-  };
-  $("#textOutput").textContent = $("#textInput").value.toLowerCase()
-    .split("").map((char) => translit[char] ?? char).join("")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-
-function textLines() {
-  const lines = $("#textInput").value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  $("#textOutput").textContent = [...new Set(lines)].sort((a, b) => a.localeCompare(b, "ru")).join("\n");
-}
-
-async function hashText() {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode($("#hashInput").value));
-  $("#hashOutput").textContent = toHex(digest);
-}
-
-async function hashSelectedFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const digest = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
-  $("#hashOutput").textContent = `${file.name}\n${toHex(digest)}`;
-}
-
-function toHex(buffer) {
-  return [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
-function parseGs1() {
-  const input = $("#gs1Input").value.trim();
-  const labels = { "01": "GTIN", "10": "Batch/Lot", "17": "Expiry YYMMDD", "21": "Serial", "30": "Count", "37": "Units" };
-  const matches = [...input.matchAll(/\((\d{2})\)([^\(]+)/g)];
-  const result = matches.map(([, ai, value]) => ({ ai, label: labels[ai] || "AI", value: value.trim() }));
-  $("#gs1Output").textContent = JSON.stringify(result, null, 2);
-}
-
-function copyOutput(target) {
-  const element = $(`#${target}`);
-  if (!element) return;
-  navigator.clipboard?.writeText(element.textContent || "");
-}
-
-function exportBacklog() {
-  const rows = [["name", "category", "status", "type", "tags"]];
-  tools.forEach((tool) => rows.push([toolTitle(tool.name), categoryName(tool.category), tool.status, tool.type, tool.tags.join("|")]));
-  const csv = rows.map((row) => row.map(escapeCsv).join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+function downloadText(filename, text) {
+  const blob = new Blob([text], { type: "text/csv;charset=utf-8" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "instr-tools.csv";
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(link.href);
 }
 
-function descriptionFor(name, category) {
-  const title = toolTitle(name);
-  const categoryText = categoryName(category).toLowerCase();
-  if (readyNames.has(name)) return `Рабочий browser-only модуль: ${title}. Можно использовать сразу без сервера.`;
-  if (mvpNames.has(name)) return `Рабочий MVP-модуль: ${title}. Открывается из каталога и выполняет задачу локально.`;
-  return `Рабочий универсальный модуль: ${title}. Тема: ${categoryText}; открывается из каталога и формирует результат.`;
+function encodeBase64(input) {
+  return btoa(unescape(encodeURIComponent(input)));
 }
 
-function tagsFor(name, category) {
-  const words = toolTitle(name).split(/\s+/).slice(0, 3);
-  return [categoryName(category), ...words].filter(Boolean);
+function decodeBase64(input) {
+  try {
+    return decodeURIComponent(escape(atob(input.trim())));
+  } catch (error) {
+    return `Base64 не разобран: ${error.message}`;
+  }
 }
 
-function toolTitle(name) {
-  if (phraseRu.has(name)) return phraseRu.get(name);
-  return name
-    .split(/(\s+|\/|,|:)/)
-    .map((token) => {
-      const plain = token.replace(/[()]/g, "");
-      if (!/[A-Za-z]/.test(plain)) return token;
-      if (keepTerms.has(plain)) return token;
-      const lower = plain.toLowerCase();
-      const translated = wordRu.has(lower) ? wordRu.get(lower) : wordRu.get(plain);
-      return translated !== undefined ? token.replace(plain, translated) : token;
-    })
-    .join("")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/^./, (char) => char.toUpperCase());
+async function sha256(input) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-function countByCategory(id) {
-  return tools.filter((tool) => tool.category === id).length;
+function simpleChecksum(input) {
+  let hash = 0;
+  for (let index = 0; index < input.length; index += 1) hash = (hash + input.charCodeAt(index) * (index + 1)) >>> 0;
+  return hash.toString(16).padStart(8, "0");
 }
 
-function categoryName(id) {
-  return categories.find((category) => category.id === id)?.name || id;
+function generatePassword(words) {
+  const alphabet = words ? ["сталь", "цех", "план", "смена", "качество", "поставка", "контроль", "деталь"] : "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%";
+  if (words) return Array.from({ length: 5 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("-");
+  return Array.from({ length: 18 }, () => alphabet[Math.floor(Math.random() * alphabet.length)]).join("");
 }
 
-function statusLabel(status) {
-  return { ready: "Готово", mvp: "MVP", backlog: "Backlog" }[status] || status;
+function slugify(input) {
+  const map = { а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "e", ж: "zh", з: "z", и: "i", й: "y", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "h", ц: "c", ч: "ch", ш: "sh", щ: "sch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya" };
+  return input.toLowerCase().split("").map((char) => map[char] ?? char).join("").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-function parseNumbers(text) {
-  return text.split(/[\s,;]+/).map((value) => Number(value.replace(",", "."))).filter(Number.isFinite);
+function formatNumber(value) {
+  return Number(value || 0).toLocaleString("ru-RU", { maximumFractionDigits: 2 });
 }
 
-function num(id) {
-  return Number($(`#${id}`).value) || 0;
-}
-
-function average(values) {
-  return values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1);
-}
-
-function stdev(values) {
-  const mean = average(values);
-  const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / Math.max(values.length - 1, 1);
-  return Math.sqrt(variance);
-}
-
-function safe(value) {
-  return Number.isFinite(value) ? value : 0;
-}
-
-function pct(value) {
-  return `${round(value * 100, 1)}%`;
-}
-
-function round(value, digits = 2) {
-  return Number(value || 0).toLocaleString("ru-RU", { maximumFractionDigits: digits });
-}
-
-function metrics(items) {
-  return items.map(([label, value]) => `<div class="metric"><span>${label}</span><strong>${value}</strong></div>`).join("");
+function today() {
+  return new Date().toISOString().slice(0, 10);
 }
 
 init();
