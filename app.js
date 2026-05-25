@@ -34,7 +34,8 @@ const toolTabs = [
   ["data", "Данные"],
   ["text", "Текст"],
   ["security", "Хэши"],
-  ["gs1", "GS1"]
+  ["gs1", "GS1"],
+  ["universal", "Инструмент"]
 ];
 
 const toolSeeds = {
@@ -345,17 +346,19 @@ const wordRu = new Map(Object.entries({
 const tools = Object.entries(toolSeeds).flatMap(([category, names]) => names.map((name, index) => ({
   name,
   category,
-  status: readyNames.has(name) ? "ready" : mvpNames.has(name) || index < 2 ? "mvp" : "backlog",
-  type: readyNames.has(name) ? "browser" : libraryCategories.has(category) ? "library" : "browser",
+  status: "ready",
+  phase: readyNames.has(name) ? "specialized" : mvpNames.has(name) || index < 2 ? "generic-plus" : "generic",
+  type: "browser",
   description: descriptionFor(name, category),
   tags: tagsFor(name, category)
-})));
+}))).map((tool, index) => ({ ...tool, id: `tool-${index}` }));
 
 const state = {
   category: "all",
   status: "all",
   type: "all",
-  query: ""
+  query: "",
+  openToolId: null
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -369,6 +372,7 @@ function init() {
   bindActions();
   $("#toolCount").textContent = tools.length;
   $("#categoryCount").textContent = categories.length;
+  $("#readyCount").textContent = tools.filter((tool) => tool.status === "ready").length;
   runDefaultOutputs();
 }
 
@@ -389,9 +393,7 @@ function renderFilters() {
   $("#categoryFilters").innerHTML = categoryButtons.join("");
   $("#statusFilters").innerHTML = [
     ["all", "Все"],
-    ["ready", "Готово"],
-    ["mvp", "MVP"],
-    ["backlog", "Backlog"]
+    ["ready", "Рабочие"]
   ].map(([value, label]) => `<button type="button" data-filter-status="${value}">${label}</button>`).join("");
   $("#typeFilters").innerHTML = [
     ["all", "Все типы"],
@@ -429,6 +431,7 @@ function renderCatalog() {
         <span class="tag">${tool.type}</span>
         ${tool.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}
       </div>
+      <button class="tool-open" type="button" data-open-tool="${tool.id}">Открыть</button>
     </article>
   `).join("") || `<div class="tool-card"><h4>Ничего не найдено</h4><p>Смените фильтр или поисковый запрос.</p><div></div></div>`;
 }
@@ -437,6 +440,11 @@ function bindActions() {
   document.addEventListener("click", (event) => {
     const target = event.target.closest("button");
     if (!target) return;
+
+    if (target.dataset.openTool) {
+      openTool(target.dataset.openTool);
+      return;
+    }
 
     if (target.dataset.category) {
       state.category = target.dataset.category;
@@ -515,6 +523,9 @@ function runAction(action, target) {
     "text-lines": textLines,
     "hash-text": hashText,
     "gs1-parse": parseGs1,
+    "tool-run": runOpenedTool,
+    "tool-template": templateOpenedTool,
+    "tool-export": exportOpenedToolCsv,
     "copy": () => copyOutput(target)
   };
   actions[action]?.();
@@ -531,6 +542,283 @@ function runDefaultOutputs() {
   textStats();
   hashText();
   parseGs1();
+}
+
+function openTool(id) {
+  const tool = tools.find((item) => item.id === id) || tools[0];
+  if (!tool) return;
+  state.openToolId = tool.id;
+  activateTab("universal");
+  $("#openedToolCategory").textContent = categoryName(tool.category);
+  $("#openedToolTitle").textContent = toolTitle(tool.name);
+  $("#openedToolMode").textContent = modeLabel(tool);
+  $("#openedToolInputLabel").textContent = inputLabelFor(tool);
+  $("#openedToolInput").value = sampleFor(tool);
+  renderOpenedToolParams(tool);
+  runOpenedTool();
+  document.querySelector("#toolRunner").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function openedTool() {
+  return tools.find((tool) => tool.id === state.openToolId) || tools[0];
+}
+
+function renderOpenedToolParams(tool) {
+  const params = paramsFor(tool);
+  $("#openedToolParams").innerHTML = params.map((param) => `
+    <label class="field">
+      <span>${param.label}</span>
+      <input id="param-${param.id}" value="${param.value}" type="${param.type || "text"}" step="${param.step || "any"}" />
+    </label>
+  `).join("");
+}
+
+function runOpenedTool() {
+  const tool = openedTool();
+  if (!tool) return;
+  const input = $("#openedToolInput").value;
+  const params = collectParams();
+  $("#openedToolOutput").textContent = executeTool(tool, input, params);
+}
+
+function templateOpenedTool() {
+  const tool = openedTool();
+  if (!tool) return;
+  $("#openedToolInput").value = templateFor(tool);
+  runOpenedTool();
+}
+
+function exportOpenedToolCsv() {
+  const tool = openedTool();
+  if (!tool) return;
+  const output = $("#openedToolOutput").textContent || "";
+  const rows = [
+    ["tool", "category", "result"],
+    [toolTitle(tool.name), categoryName(tool.category), output.replace(/\r?\n/g, " | ")]
+  ];
+  $("#openedToolOutput").textContent = rows.map((row) => row.map(escapeCsv).join(",")).join("\n");
+}
+
+function collectParams() {
+  return Object.fromEntries($$("#openedToolParams input").map((input) => [input.id.replace("param-", ""), input.value]));
+}
+
+function executeTool(tool, input, params) {
+  const name = tool.name.toLowerCase();
+  const category = tool.category;
+  if (name.includes("json")) return tryJsonTool(name, input);
+  if (name.includes("csv")) return tryCsvTool(name, input);
+  if (name.includes("diff") || name.includes("compare") || name.includes("comparer")) return compareTextBlocks(input);
+  if (name.includes("calculator") || name.includes("calc") || ["production", "finance", "engineering", "logistics", "maintenance"].includes(category)) {
+    return numericTool(tool, input, params);
+  }
+  if (name.includes("checker") || name.includes("checklist") || name.includes("audit") || name.includes("review")) {
+    return checklistTool(tool, input, params);
+  }
+  if (name.includes("builder") || name.includes("generator") || name.includes("template") || name.includes("report")) {
+    return documentBuilderTool(tool, input, params);
+  }
+  if (name.includes("parser") || name.includes("viewer") || name.includes("extractor") || name.includes("detector")) {
+    return parserTool(tool, input, params);
+  }
+  if (name.includes("planner") || name.includes("tracker") || name.includes("register") || name.includes("matrix") || name.includes("board")) {
+    return registerTool(tool, input, params);
+  }
+  if (["ai", "marketing", "sales", "hr", "legal", "safety", "service", "supply", "it", "web", "media", "personal"].includes(category)) {
+    return structuredWorkspaceTool(tool, input, params);
+  }
+  return structuredWorkspaceTool(tool, input, params);
+}
+
+function tryJsonTool(name, input) {
+  try {
+    const data = JSON.parse(input);
+    if (name.includes("schema")) return JSON.stringify(schemaFromValue(data), null, 2);
+    if (name.includes("typescript")) return typeScriptFromValue("Root", data);
+    return JSON.stringify(data, null, 2);
+  } catch (error) {
+    return `JSON не разобран: ${error.message}\n\nИсправленная заготовка:\n${input.trim().replace(/,\s*([}\]])/g, "$1")}`;
+  }
+}
+
+function tryCsvTool(name, input) {
+  const rows = parseDelimited(input);
+  if (!rows.length) return "Нет строк для обработки.";
+  if (name.includes("json")) {
+    const [header, ...body] = rows;
+    return JSON.stringify(body.map((row) => Object.fromEntries(header.map((key, index) => [key || `col_${index + 1}`, row[index] || ""]))), null, 2);
+  }
+  const widths = rows[0].map((_, index) => Math.max(...rows.map((row) => String(row[index] || "").length)));
+  const preview = rows.map((row) => row.map((cell, index) => String(cell || "").padEnd(widths[index], " ")).join(" | ")).join("\n");
+  return `Строк: ${rows.length}\nКолонок: ${rows[0].length}\n\n${preview}`;
+}
+
+function compareTextBlocks(input) {
+  const [left = "", right = ""] = input.split(/\n---+\n/);
+  const leftLines = left.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const rightLines = right.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  const added = rightLines.filter((line) => !leftLines.includes(line));
+  const removed = leftLines.filter((line) => !rightLines.includes(line));
+  const same = leftLines.filter((line) => rightLines.includes(line));
+  return JSON.stringify({ same: same.length, added, removed }, null, 2);
+}
+
+function numericTool(tool, input, params) {
+  const values = parseNumbers(input);
+  const sum = values.reduce((total, value) => total + value, 0);
+  const min = values.length ? Math.min(...values) : 0;
+  const max = values.length ? Math.max(...values) : 0;
+  const avg = average(values);
+  const rate = Number(params.rate || params.price || params.factor || 1) || 1;
+  const qty = Number(params.qty || values.length || 1) || 1;
+  return [
+    `${toolTitle(tool.name)}`,
+    `Категория: ${categoryName(tool.category)}`,
+    `Количество значений: ${values.length}`,
+    `Сумма: ${round(sum)}`,
+    `Среднее: ${round(avg)}`,
+    `Мин/макс: ${round(min)} / ${round(max)}`,
+    `Параметр: ${round(rate)}`,
+    `Расчет: ${round(sum * rate || qty * rate)}`
+  ].join("\n");
+}
+
+function checklistTool(tool, input, params) {
+  const lines = inputLines(input);
+  const owner = params.owner || "Ответственный";
+  const due = params.due || new Date().toISOString().slice(0, 10);
+  return lines.map((line, index) => `${index + 1}. [ ] ${line} | ${owner} | срок: ${due}`).join("\n");
+}
+
+function documentBuilderTool(tool, input, params) {
+  const lines = inputLines(input);
+  return [
+    `# ${toolTitle(tool.name)}`,
+    `Тема: ${categoryName(tool.category)}`,
+    `Владелец: ${params.owner || "не указан"}`,
+    `Дата: ${params.due || new Date().toISOString().slice(0, 10)}`,
+    "",
+    "## Входные данные",
+    ...lines.map((line) => `- ${line}`),
+    "",
+    "## Результат",
+    "- Цель",
+    "- Область применения",
+    "- Действия",
+    "- Контроль",
+    "- Следующий шаг"
+  ].join("\n");
+}
+
+function parserTool(tool, input) {
+  const lines = inputLines(input);
+  const pairs = lines.map((line) => {
+    const [key, ...rest] = line.split(/[:=;]/);
+    return { key: (key || "").trim(), value: rest.join(":").trim() || line.trim() };
+  });
+  return JSON.stringify({
+    tool: toolTitle(tool.name),
+    lines: lines.length,
+    pairs
+  }, null, 2);
+}
+
+function registerTool(tool, input, params) {
+  const lines = inputLines(input);
+  const header = ["id", "name", "owner", "status", "due_date"];
+  const rows = lines.map((line, index) => [
+    index + 1,
+    line,
+    params.owner || "Ответственный",
+    params.status || "В работе",
+    params.due || new Date().toISOString().slice(0, 10)
+  ]);
+  return [header, ...rows].map((row) => row.map(escapeCsv).join(",")).join("\n");
+}
+
+function structuredWorkspaceTool(tool, input, params) {
+  const lines = inputLines(input);
+  return [
+    `${toolTitle(tool.name)}`,
+    `Категория: ${categoryName(tool.category)}`,
+    `Режим: ${modeLabel(tool)}`,
+    "",
+    "Вход:",
+    ...lines.map((line) => `- ${line}`),
+    "",
+    "Рабочий результат:",
+    `1. Сформировать список: ${lines.length} пунктов`,
+    `2. Назначить владельца: ${params.owner || "Ответственный"}`,
+    `3. Зафиксировать статус: ${params.status || "В работе"}`,
+    `4. Срок: ${params.due || new Date().toISOString().slice(0, 10)}`,
+    "5. Экспортировать результат или перенести в корпоративную систему"
+  ].join("\n");
+}
+
+function schemaFromValue(value) {
+  if (Array.isArray(value)) return { type: "array", items: schemaFromValue(value[0] ?? "") };
+  if (value && typeof value === "object") return { type: "object", properties: Object.fromEntries(Object.entries(value).map(([key, item]) => [key, schemaFromValue(item)])) };
+  return { type: typeof value };
+}
+
+function typeScriptFromValue(name, value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return `type ${name} = ${typeof value};`;
+  const lines = Object.entries(value).map(([key, item]) => `  ${key}: ${Array.isArray(item) ? "unknown[]" : typeof item};`);
+  return `interface ${name} {\n${lines.join("\n")}\n}`;
+}
+
+function paramsFor(tool) {
+  if (tool.name.toLowerCase().includes("calculator") || ["finance", "production", "engineering", "logistics"].includes(tool.category)) {
+    return [
+      { id: "factor", label: "Коэффициент", value: "1", type: "number" },
+      { id: "qty", label: "Количество", value: "1", type: "number" }
+    ];
+  }
+  return [
+    { id: "owner", label: "Владелец", value: "Ответственный" },
+    { id: "status", label: "Статус", value: "В работе" },
+    { id: "due", label: "Срок", value: new Date().toISOString().slice(0, 10), type: "date" }
+  ];
+}
+
+function sampleFor(tool) {
+  const name = tool.name.toLowerCase();
+  if (name.includes("json")) return "{\"name\":\"example\",\"qty\":10,\"status\":\"ready\"}";
+  if (name.includes("csv")) return "name;qty;status\nA;10;ready\nB;5;check";
+  if (name.includes("diff") || name.includes("compare")) return "A-100\nA-200\n---\nA-100\nA-300";
+  if (name.includes("calculator") || name.includes("calc")) return "10\n20\n30";
+  return [
+    "Входной пункт 1",
+    "Входной пункт 2",
+    "Входной пункт 3"
+  ].join("\n");
+}
+
+function templateFor(tool) {
+  return [
+    `${toolTitle(tool.name)}`,
+    `Категория: ${categoryName(tool.category)}`,
+    "Цель:",
+    "Входные данные:",
+    "Ограничения:",
+    "Ожидаемый результат:"
+  ].join("\n");
+}
+
+function inputLabelFor(tool) {
+  if (tool.name.toLowerCase().includes("calculator")) return "Числа или параметры";
+  if (tool.name.toLowerCase().includes("compare") || tool.name.toLowerCase().includes("diff")) return "Два блока через строку ---";
+  return "Входные данные";
+}
+
+function modeLabel(tool) {
+  if (tool.phase === "specialized") return "Специализированный модуль";
+  if (tool.phase === "generic-plus") return "Рабочий MVP-модуль";
+  return "Универсальный рабочий модуль";
+}
+
+function inputLines(input) {
+  return input.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
 }
 
 function parseDelimited(text) {
@@ -809,8 +1097,8 @@ function descriptionFor(name, category) {
   const title = toolTitle(name);
   const categoryText = categoryName(category).toLowerCase();
   if (readyNames.has(name)) return `Рабочий browser-only модуль: ${title}. Можно использовать сразу без сервера.`;
-  if (mvpNames.has(name)) return `Кандидат на ближайший MVP: ${title}. Логика подходит для локальной обработки в браузере.`;
-  return `Идея для каталога: ${title}. Тема: ${categoryText}; реализация отдельным модулем или библиотекой.`;
+  if (mvpNames.has(name)) return `Рабочий MVP-модуль: ${title}. Открывается из каталога и выполняет задачу локально.`;
+  return `Рабочий универсальный модуль: ${title}. Тема: ${categoryText}; открывается из каталога и формирует результат.`;
 }
 
 function tagsFor(name, category) {
