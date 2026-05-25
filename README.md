@@ -4,11 +4,10 @@ Browser-first internal toolbox for a manufacturing company.
 
 ## What is inside
 
-- Menu-based catalog with 24 broad topics and 531 working tools.
-- Russian display names for the tool menu and CSV export.
-- Searchable tool list where every item opens in the working browser runner.
-- Specialized browser-only modules: CSV cleaner, BOM comparer, OEE/takt calculator, Cp/Cpk, Pareto, serial batch CSV, JSON/JWT/Base64/URL tools, text utilities, SHA-256 checksum, GS1 parser.
-- Universal runner for the rest: checklists, calculators, registers, templates, text/CSV/JSON processing, comparison, parsing, planning, and structured work outputs.
+- Clean Russian-language catalog with 24 topics and 415 working tools.
+- Compact interface: category menu, search, workbench, and tool list.
+- Every tool opens in the browser workbench and produces a usable result.
+- Supported modes: tables, documents, calculators, checklists, registers, comparison, conversion, parsing, text processing, security helpers, AI prompts, and media workflows.
 - Vercel-ready static deployment.
 
 ## Local run
