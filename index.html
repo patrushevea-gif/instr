@@ -30,7 +30,7 @@
           <div class="hero-metrics" aria-label="Сводка">
             <span><strong id="toolCount">0</strong> инструментов</span>
             <span><strong id="categoryCount">0</strong> тем</span>
-            <span><strong>11</strong> быстрых модулей</span>
+            <span><strong id="readyCount">0</strong> рабочих</span>
           </div>
         </div>
         <div class="topic-board" id="topicBoard" aria-label="Темы инструментов"></div>
@@ -235,6 +235,32 @@ A-300,50,A</textarea>
                     <button type="button" data-action="copy" data-target="gs1Output">Копировать</button>
                   </div>
                   <pre id="gs1Output"></pre>
+                </div>
+              </div>
+            </section>
+
+            <section class="tool-panel" data-panel="universal">
+              <div class="opened-tool-head">
+                <div>
+                  <p class="eyebrow" id="openedToolCategory">Каталог</p>
+                  <h3 id="openedToolTitle">Выберите инструмент из списка</h3>
+                </div>
+                <span class="local-badge" id="openedToolMode">Рабочий browser-only модуль</span>
+              </div>
+              <div class="tool-grid two">
+                <label class="field wide">
+                  <span id="openedToolInputLabel">Входные данные</span>
+                  <textarea id="openedToolInput" rows="10"></textarea>
+                </label>
+                <div class="result-card">
+                  <div class="calc-grid compact" id="openedToolParams"></div>
+                  <div class="mini-toolbar wrap">
+                    <button type="button" data-action="tool-run">Выполнить</button>
+                    <button type="button" data-action="tool-template">Шаблон</button>
+                    <button type="button" data-action="tool-export">CSV</button>
+                    <button type="button" data-action="copy" data-target="openedToolOutput">Копировать</button>
+                  </div>
+                  <pre id="openedToolOutput"></pre>
                 </div>
               </div>
             </section>
